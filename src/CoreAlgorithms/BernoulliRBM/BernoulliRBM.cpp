@@ -258,6 +258,10 @@ bool BernoulliRBM::train_(MatrixDouble &data){
             double *vlb_p = &visibleLayerBias[0];
             double *hlb_p = &hiddenLayerBias[0];
             
+            if( w_p == NULL || wT_p == NULL || vW_p == NULL || data_p == NULL || v1_p == NULL ||
+                v2_p == NULL || h1_p == NULL || h2_p == NULL || vlb_p == NULL || hlb_p == NULL)
+                return false;
+            
             //Get the batch data
             UINT index = 0;
             for(i=batchIndexs[k].startIndex; i<batchIndexs[k].endIndex; i++){

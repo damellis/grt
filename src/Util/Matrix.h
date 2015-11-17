@@ -247,54 +247,41 @@ public:
 		clear();
         
 		if( r > 0 && c > 0 ){
-            try{
-                rows = r;
-                cols = c;
-                size = r * c;
-                capacity = r;
-                
-                dataPtr = new T[size];
-                rowPtr = new T*[rows];
-                
-                if( dataPtr == NULL ){
-                    rows = 0;
-                    cols = 0;
-                    size = 0;
-                    capacity = 0;
-					errorLog << "resize(const unsigned r,const unsigned int c) - Failed to allocate memory! r: " << r << " c: " << c << std::endl;
-                    throw Exception("Matrix::resize(const unsigned int r,const unsigned int c) - Failed to allocate memory!");
-                    return false;
-                }
-                
-                if( rowPtr == NULL ){
-                    rows = 0;
-                    cols = 0;
-                    size = 0;
-                    capacity = 0;
-					errorLog << "resize(const unsigned r,const unsigned int c) - Failed to allocate memory! r: " << r << " c: " << c << std::endl;
-                    throw Exception("Matrix::resize(const unsigned int r,const unsigned int c) - Failed to allocate memory!");
-                    return false;
-                }
-                
-                //Setup the row pointers
-                unsigned int i=0;
-                T *p = &(dataPtr[0]);
-                for(i=0; i<rows; i++){
-                    rowPtr[i] = p;
-                    p += cols;
-                }
-                
-                return true;
-                
-            }catch( std::exception& e ){
-                errorLog << "resize: Failed to allocate memory. Error: " << e.what() << " rows: " << r << " cols: " << c <<  std::endl;
-                clear();
-                return false;
-            }catch( ... ){
-                errorLog << "resize: Failed to allocate memory." << std::endl;
-                clear();
+            rows = r;
+            cols = c;
+            size = r * c;
+            capacity = r;
+            
+            dataPtr = new T[size];
+            rowPtr = new T*[rows];
+            
+            if( dataPtr == NULL ){
+                rows = 0;
+                cols = 0;
+                size = 0;
+                capacity = 0;
+                errorLog << "resize(const unsigned r,const unsigned int c) - Failed to allocate memory! r: " << r << " c: " << c << std::endl;
                 return false;
             }
+            
+            if( rowPtr == NULL ){
+                rows = 0;
+                cols = 0;
+                size = 0;
+                capacity = 0;
+                errorLog << "resize(const unsigned r,const unsigned int c) - Failed to allocate memory! r: " << r << " c: " << c << std::endl;
+                return false;
+            }
+            
+            //Setup the row pointers
+            unsigned int i=0;
+            T *p = &(dataPtr[0]);
+            for(i=0; i<rows; i++){
+                rowPtr[i] = p;
+                p += cols;
+            }
+            
+            return true;
 		}
 		return false;
 	}
@@ -311,7 +298,6 @@ public:
             
             if( this->size != rhs.size ){
                 if( !this->resize( rhs.rows, rhs.cols ) ){
-                    throw Exception("Matrix::copy( const Matrix<T> &rhs ) - Failed to allocate resize matrix!");
                     return false;
                 }
             }
@@ -559,7 +545,7 @@ public:
      */
     T** getDataPointer() const{
         if( rowPtr == NULL ){
-            throw Exception("Matrix::getDataPointer() - Matrix has not been initialized!");
+            return NULL;
         }
         return &(rowPtr[0]);
     }

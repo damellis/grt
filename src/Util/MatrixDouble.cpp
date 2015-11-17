@@ -250,6 +250,8 @@ MatrixDouble MatrixDouble::multiple(const MatrixDouble &b) const{
     double **pb = b.getDataPointer();
     double **pc = c.getDataPointer();
     
+    if( pb == NULL || pc == NULL ) return MatrixDouble();
+    
     unsigned int i,j,k = 0;
     for(i=0; i<M; i++){
         for(j=0; j<L; j++){
@@ -285,6 +287,8 @@ bool MatrixDouble::multiple(const MatrixDouble &a,const MatrixDouble &b,const bo
     //Using direct pointers really helps speed up the computation time
     double **pa = a.getDataPointer();
     double **pb = b.getDataPointer();
+    
+    if( pa == NULL || pb == NULL ) return false;
     
     if( aTranspose ){
         
@@ -362,6 +366,8 @@ bool MatrixDouble::add(const MatrixDouble &a,const MatrixDouble &b){
     double **pa = a.getDataPointer();
     double **pb = b.getDataPointer();
     
+    if( pa == NULL || pb == NULL ) return false;
+    
     for(i=0; i<M; i++){
         for(j=0; j<N; j++){
             dataPtr[i*cols+j] = pa[i][j] + pb[i][j];
@@ -389,6 +395,8 @@ bool MatrixDouble::subtract(const MatrixDouble &b){
     
     //Using direct pointers really helps speed up the computation time
     double **pb = b.getDataPointer();
+    
+    if( pb == NULL ) return false;
     
     for(i=0; i<rows; i++){
         for(j=0; j<cols; j++){
@@ -423,6 +431,8 @@ bool MatrixDouble::subtract(const MatrixDouble &a,const MatrixDouble &b){
     //Using direct pointers really helps speed up the computation time
     double **pa = a.getDataPointer();
     double **pb = b.getDataPointer();
+    
+    if( pa == NULL || pb == NULL ) return false;
     
     for(i=0; i<M; i++){
         for(j=0; j<N; j++){
