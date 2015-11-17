@@ -96,6 +96,15 @@ typedef signed int SINT;
 typedef unsigned long ULONG;
 #endif
     
+#ifdef ARDUINO
+#define grt_isnan(x) (x != x)
+#define grt_isinf(x) (!grt_isnan(x) && grt_isnan(x - x))
+    
+typedef unsigned int UINT;
+typedef signed int SINT;
+typedef unsigned long ULONG;
+#endif
+    
 //Define any common GRT OS independent typedefs
 typedef std::vector<double> VectorDouble;
     
