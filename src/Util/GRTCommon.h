@@ -25,21 +25,17 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <fstream>
 #include <sstream>
 #include <string>
 #include <float.h>
 #include <cmath>
 #include <math.h>
-#include <time.h>
 #include <map>
 #include <limits>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
 #include <cstddef>
-#include <atomic>
-#include <thread>
 
 //Include the main GRT version and typedef headers
 #include "GRTVersionInfo.h"
@@ -71,7 +67,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "SVD.h"
 #include "FileParser.h"
 #include "ObserverManager.h"
-#include "ThreadPool.h"
 
 #if _MSC_VER >= 1600
     inline double round( double d ) {

@@ -66,7 +66,6 @@
 #include <string.h>
 #include <stdarg.h>
 #include <limits.h>
-#include <locale.h>
 #include <iostream>
 #include <algorithm>
 

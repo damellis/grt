@@ -22,7 +22,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define GRT_FILE_PARSER_HEADER
 
 #include <iostream>     // cout, endl
-#include <fstream>      // fstream
 #include <vector>
 #include <string>
 #include <algorithm>    // copy
