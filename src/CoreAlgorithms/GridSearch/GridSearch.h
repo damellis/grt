@@ -74,7 +74,7 @@ template < class T >
 class GridSearchParam {
 public:
 
-    GridSearchParam( std::function< bool(T) > func, GridSearchRange<T> range ){
+    GridSearchParam( std::unary_function< T, bool > func, GridSearchRange<T> range ){
         this->func = func;
         this->range = range;
     }
@@ -102,7 +102,7 @@ public:
 
     T get(){ return range.get(); }
 
-    std::function< bool(T) > func;
+    std::unary_function< T, bool > func;
     GridSearchRange<T> range;
 };
 
@@ -123,7 +123,7 @@ public:
         
     }
 
-    bool addParameter( std::function< bool(unsigned int) > f , GridSearchRange< unsigned int > range ){
+    bool addParameter( std::unary_function< unsigned int, bool > f , GridSearchRange< unsigned int > range ){
         params.push_back( GridSearchParam<unsigned int>( f, range ) );
         return true;
     }
@@ -162,7 +162,7 @@ public:
         return true;
     }
 
-    bool setEvaluationFunction( std::function< double () > f, SearchType type = MaxValueSearch ){
+    bool setEvaluationFunction( std::unary_function< void, double > f, SearchType type = MaxValueSearch ){
         evalFunc = f;
         evalType = type;
         return true;
@@ -240,7 +240,7 @@ protected:
     }
 
     std::vector< GridSearchParam<unsigned int> > params;
-    std::function< double () >  evalFunc; 
+    std::unary_function< void, double >  evalFunc;
     SearchType evalType;
     double bestResult;
     T model;
