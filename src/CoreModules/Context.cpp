@@ -60,6 +60,7 @@ bool Context::init(){
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool Context::saveContextSettingsToFile(fstream &file) const{
     
     if( !file.is_open() ){
@@ -67,13 +68,20 @@ bool Context::saveContextSettingsToFile(fstream &file) const{
         return false;
     }
     
-    if( !MLBase::saveBaseSettingsToFile( file ) ) return false;
+    return saveContextSettingsToStream(file);
+}
+#endif
+    
+bool Context::saveContextSettingsToStream(ostream &file) const{
+    
+    if( !MLBase::saveBaseSettingsToStream( file ) ) return false;
     
     file << "Initialized: " << initialized << endl;
     
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool Context::loadContextSettingsFromFile(fstream &file){
     
     if( !file.is_open() ){
@@ -81,8 +89,14 @@ bool Context::loadContextSettingsFromFile(fstream &file){
         return false;
     }
     
+    return loadContextSettingsFromStream(file);
+}
+#endif
+
+bool Context::loadContextSettingsFromStream(istream &file){
+    
     //Try and load the base settings from the file
-    if( !MLBase::loadBaseSettingsFromFile( file ) ){
+    if( !MLBase::loadBaseSettingsFromStream( file ) ){
         return false;
     }
     

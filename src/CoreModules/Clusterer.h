@@ -231,19 +231,37 @@ public:
     using MLBase::train;
     
 protected:
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Saves the core clusterer settings to a file.
      
      @return returns true if the base settings were saved, false otherwise
      */
     bool saveClustererSettingsToFile(fstream &file) const;
+#endif
+    
+    /**
+     Saves the core clusterer settings to an output stream.
+     
+     @return returns true if the base settings were saved, false otherwise
+     */
+    bool saveClustererSettingsToStream(ostream &file) const;
+    
+#ifndef __GRT_ARDUINO_BUILD__
+    /**
+     Loads the core clusterer settings from an input stream.
+     
+     @return returns true if the base settings were loaded, false otherwise
+     */
+    bool loadClustererSettingsFromFile(fstream &file);
+#endif
     
     /**
      Loads the core clusterer settings from a file.
      
      @return returns true if the base settings were loaded, false otherwise
      */
-    bool loadClustererSettingsFromFile(fstream &file);
+    bool loadClustererSettingsFromStream(istream &file);
 
     string clustererType;
     UINT numClusters;                   ///< Number of clusters in the model

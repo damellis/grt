@@ -250,7 +250,8 @@ bool Classifier::setNullRejectionThresholds(VectorDouble newRejectionThresholds)
 const Classifier& Classifier::getBaseClassifier() const{
     return *this;
 }
-    
+
+#ifndef __GRT_ARDUINO_BUILD__
 bool Classifier::saveBaseSettingsToFile(fstream &file) const{
     
     if( !file.is_open() ){
@@ -258,7 +259,13 @@ bool Classifier::saveBaseSettingsToFile(fstream &file) const{
         return false;
     }
     
-    if( !MLBase::saveBaseSettingsToFile( file ) ) return false;
+    return saveBaseSettingsToStream( file );
+}
+#endif
+    
+bool Classifier::saveBaseSettingsToStream(ostream &file) const{
+        
+    if( !MLBase::saveBaseSettingsToStream( file ) ) return false;
     
     file << "UseNullRejection: " << useNullRejection << endl;
     file << "ClassifierMode: " << classifierMode << endl;
@@ -298,6 +305,7 @@ bool Classifier::saveBaseSettingsToFile(fstream &file) const{
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool Classifier::loadBaseSettingsFromFile(fstream &file){
     
     if( !file.is_open() ){
@@ -305,8 +313,15 @@ bool Classifier::loadBaseSettingsFromFile(fstream &file){
         return false;
     }
     
+    return loadBaseSettingsFromStream( file );
+}
+#endif
+
+
+bool Classifier::loadBaseSettingsFromStream(istream &file){
+        
     //Try and load the base settings from the file
-    if( !MLBase::loadBaseSettingsFromFile( file ) ){
+    if( !MLBase::loadBaseSettingsFromStream( file ) ){
         return false;
     }
     

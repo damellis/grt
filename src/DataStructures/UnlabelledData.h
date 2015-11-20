@@ -184,6 +184,7 @@ public:
     */
 	bool scale(const vector<MinMax> &ranges,const double minTarget,const double maxTarget);
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Saves the data to a file.
      If the file format ends in '.csv' then the data will be saved as comma-seperated-values, otherwise it will be saved
@@ -240,7 +241,45 @@ public:
 	 @return true if the data was loaded successfully, false otherwise
      */
 	bool loadDatasetFromCSVFile(const string &filename);
-
+#endif
+    
+    /**
+     Saves the unlabeled classification data to a custom file format.
+     
+     @param ostream &file: the output stream the data will be saved to
+     @return true if the data was saved successfully, false otherwise
+     */
+    bool saveDatasetToStream(ostream &file);
+    
+    /**
+     Loads the unlabeled classification data from a custom file format.
+     
+     @param istream &file: the input stream the data will be loaded from
+     @return true if the data was loaded successfully, false otherwise
+     */
+    bool loadDatasetFromStream(istream &file);
+    
+    /**
+     Saves the unlabeled classification data to a CSV file.
+     This will save the sample data as N columns, where N is the number of dimensions in the data.
+     Each row will represent a sample.
+     
+     @param ostream &file: the output stream the data will be saved to
+     @return true if the data was saved successfully, false otherwise
+     */
+    bool saveDatasetToCSVStream(ostream &file) const;
+    
+    /**
+     Loads the unlabelled classification data from a CSV file.
+     This assumes the data is formatted with each row representing a sample.
+     The sample data should be formatted as N columns, where N is the number of dimensions in the data.
+     Each row should represent a sample
+     
+     @param istream &file: the input stream the data will be loaded from
+     @return true if the data was loaded successfully, false otherwise
+     */
+    bool loadDatasetFromCSVStream(istream &file);
+    
 	/**
      Partitions the dataset into a training dataset (which is kept by this instance of the UnlabelledData) and
 	 a testing/validation dataset (which is returned as a new instance of a UnlabelledData).
@@ -342,6 +381,8 @@ public:
 	MatrixDouble getDataAsMatrixDouble() const;
 
 private:
+    bool loadDatasetFromFileParser(FileParser &parser);
+    
     string datasetName;                                     ///< The name of the dataset
     string infoText;                                        ///< Some infoText about the dataset
 	UINT numDimensions;										///< The number of dimensions in the dataset

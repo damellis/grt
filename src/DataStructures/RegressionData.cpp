@@ -475,6 +475,7 @@ UINT RegressionData::removeDuplicateSamples(){
     return numSamplesRemoved;
 }
     
+#ifndef __GRT_ARDUINO_BUILD__
 bool RegressionData::save(const string &filename) const{
     
     //Check if the file should be saved as a csv file
@@ -496,7 +497,9 @@ bool RegressionData::load(const string &filename){
     //Otherwise save it as a custom GRT file
     return loadDatasetFromFile( filename );
 }
-
+#endif
+    
+#ifndef __GRT_ARDUINO_BUILD__
 bool RegressionData::saveDatasetToFile(const string &filename) const{
 
 	std::fstream file;
@@ -506,7 +509,16 @@ bool RegressionData::saveDatasetToFile(const string &filename) const{
         errorLog << "saveDatasetToFile(const string &filename) - Failed to open file!" << endl;
 		return false;
 	}
-
+    
+    bool res = saveDatasetToStream(file);
+    
+    file.close();
+    
+    return res;
+}
+#endif
+    
+bool RegressionData::saveDatasetToStream(ostream &file) const{
 	file << "GRT_LABELLED_REGRESSION_DATA_FILE_V1.0\n";
     file << "DatasetName: " << datasetName << endl;
     file << "InfoText: " << infoText << endl;
@@ -537,10 +549,10 @@ bool RegressionData::saveDatasetToFile(const string &filename) const{
 		file << endl;
 	}
 
-	file.close();
 	return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool RegressionData::loadDatasetFromFile(const string &filename){
 
 	std::fstream file;
@@ -551,14 +563,22 @@ bool RegressionData::loadDatasetFromFile(const string &filename){
         errorLog << "loadDatasetFromFile(const string &filename) - Failed to open file!" << endl;
 		return false;
 	}
-
+    
+    bool res = loadDatasetFromStream(file);
+    
+    file.close();
+    
+    return res;
+}
+#endif
+    
+bool RegressionData::loadDatasetFromStream(istream &file){
 	string word;
 
 	//Check to make sure this is a file with the Training File Format
 	file >> word;
 	if(word != "GRT_LABELLED_REGRESSION_DATA_FILE_V1.0"){
         errorLog << "loadDatasetFromFile(const string &filename) - Unknown file header!" << endl;
-		file.close();
 		return false;
 	}
 
@@ -566,7 +586,6 @@ bool RegressionData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if(word != "DatasetName:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find DatasetName!" << endl;
-		file.close();
 		return false;
 	}
 	file >> datasetName;
@@ -574,7 +593,6 @@ bool RegressionData::loadDatasetFromFile(const string &filename){
     file >> word;
 	if(word != "InfoText:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find InfoText!" << endl;
-		file.close();
 		return false;
 	}
 
@@ -589,7 +607,6 @@ bool RegressionData::loadDatasetFromFile(const string &filename){
 	//Get the number of input dimensions in the training data
 	if(word != "NumInputDimensions:"){
         errorLog << "loadDatasetFromFile(const string &filename) - Failed to find NumInputDimensions!" << endl;
-		file.close();
 		return false;
 	}
 	file >> numInputDimensions;
@@ -598,7 +615,6 @@ bool RegressionData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if(word != "NumTargetDimensions:"){
         errorLog << "loadDatasetFromFile(const string &filename) - Failed to find NumTargetDimensions!" << endl;
-		file.close();
 		return false;
 	}
 	file >> numTargetDimensions;
@@ -607,7 +623,6 @@ bool RegressionData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if(word != "TotalNumTrainingExamples:"){
         errorLog << "loadDatasetFromFile(const string &filename) - Failed to find TotalNumTrainingExamples!" << endl;
-		file.close();
 		return false;
 	}
 	file >> totalNumSamples;
@@ -616,7 +631,6 @@ bool RegressionData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if(word != "UseExternalRanges:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find DatasetName!" << endl;
-		file.close();
 		return false;
 	}
     file >> useExternalRanges;
@@ -639,7 +653,6 @@ bool RegressionData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if( word != "RegressionData:" && word != "LabelledRegressionData:" ){
         errorLog << "loadDatasetFromFile(const string &filename) - Failed to find RegressionData!" << endl;
-		file.close();
 		return false;
 	}
 
@@ -658,10 +671,10 @@ bool RegressionData::loadDatasetFromFile(const string &filename){
         data[i].set(inputVector, targetVector);
 	}
 
-	file.close();
 	return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool RegressionData::saveDatasetToCSVFile(const string &filename) const{
 
     std::fstream file;
@@ -671,6 +684,16 @@ bool RegressionData::saveDatasetToCSVFile(const string &filename) const{
         errorLog << "saveDatasetToCSVFile(const string &filename) - Failed to open file!" << endl;
 		return false;
 	}
+    
+    bool res = saveDatasetToCSVStream(file);
+    
+    file.close();
+    
+    return res;
+}
+#endif
+    
+bool RegressionData::saveDatasetToCSVStream(ostream &file) const{
 
     //Write the data to the CSV file
     for(UINT i=0; i<totalNumSamples; i++){
@@ -684,11 +707,10 @@ bool RegressionData::saveDatasetToCSVFile(const string &filename) const{
 		file << endl;
 	}
 
-	file.close();
-
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool RegressionData::loadDatasetFromCSVFile(const string &filename,const UINT numInputDimensions,const UINT numTargetDimensions){
 
     fstream file;
@@ -707,7 +729,33 @@ bool RegressionData::loadDatasetFromCSVFile(const string &filename,const UINT nu
         errorLog << "loadDatasetFromCSVFile(...) - Failed to parse CSV file!" << endl;
         return false;
     }
+
+    return loadDatasetFromFileParser(parser,numInputDimensions,numTargetDimensions);
+}
+#endif
+
+bool RegressionData::loadDatasetFromCSVStream(istream &file,const UINT numInputDimensions,const UINT numTargetDimensions){
     
+    string value;
+    clear();
+    datasetName = "NOT_SET";
+    infoText = "";
+    
+    //Clear any previous data
+    clear();
+    
+    //Parse the CSV file
+    FileParser parser;
+    
+    if( !parser.parseCSVFile(file,true) ){
+        errorLog << "loadDatasetFromCSVFile(...) - Failed to parse CSV file!" << endl;
+        return false;
+    }
+    
+    return loadDatasetFromFileParser(parser,numInputDimensions,numTargetDimensions);
+}
+    
+bool RegressionData::loadDatasetFromFileParser(FileParser &parser,const UINT numInputDimensions,const UINT numTargetDimensions){
     if( !parser.getConsistentColumnSize() ){
         errorLog << "loadDatasetFromCSVFile(...) - The CSV file does not have a consistent number of columns!" << endl;
         return false;
@@ -748,6 +796,6 @@ bool RegressionData::loadDatasetFromCSVFile(const string &filename,const UINT nu
     
     return true;
 }
-
+    
 } //End of namespace GRT
 

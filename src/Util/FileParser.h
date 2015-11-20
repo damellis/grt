@@ -44,7 +44,8 @@ public:
     vector< string >& operator[](const unsigned int &index){
         return fileContents[index];
     }
-    
+
+#ifndef __GRT_ARDUINO_BUILD__
     bool parseCSVFile(string filename,bool removeNewLineCharacter=true){
         return parseFile(filename,removeNewLineCharacter,',');
     }
@@ -52,7 +53,16 @@ public:
     bool parseTSVFile(string filename,bool removeNewLineCharacter=true){
         return parseFile(filename,removeNewLineCharacter,'\t');
     }
+#endif
   
+    bool parseCSVFile(istream &file,bool removeNewLineCharacter=true){
+        return parseFile(file,removeNewLineCharacter,',');
+    }
+    
+    bool parseTSVFile(istream &file,bool removeNewLineCharacter=true){
+        return parseFile(file,removeNewLineCharacter,'\t');
+    }
+    
     bool getFileParsed(){
 	  return fileParsed;
     }
@@ -111,17 +121,27 @@ public:
     }
   
 protected:
-    
+#ifndef __GRT_ARDUINO_BUILD__
     bool parseFile(string filename,bool removeNewLineCharacter,const char seperator){
-        
-        //Clear any previous data
-        clear();
-        
         ifstream file( filename.c_str(), ifstream::in );
         if ( !file.is_open() ){
             warningLog << "parseFile(...) - Failed to open file: " << filename << endl;
             return false;
         }
+        
+        bool res = parseFile(file, removeNewLineCharacter, seperator);
+        
+        //Close the file
+        file.close();
+        
+        return res;
+    }
+#endif
+        
+    bool parseFile(istream &file,bool removeNewLineCharacter,const char seperator){
+        
+        //Clear any previous data
+        clear();
         
         vector< string > vec;
         string line;
@@ -132,7 +152,6 @@ protected:
             if( !parseColumn(line, vec,seperator) ){
                 clear();
                 warningLog << "parseFile(...) - Failed to parse column!" << endl;
-                file.close();
                 return false;
             }
             
@@ -144,9 +163,6 @@ protected:
 
             fileContents.push_back( vec );
         }
-        
-        //Close the file
-        file.close();
         
         //Flag that we have parsed the file
         fileParsed = true;

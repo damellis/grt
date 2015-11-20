@@ -106,6 +106,7 @@ bool PreProcessing::init(){
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool PreProcessing::saveModelToFile(string filename) const{
     
     std::fstream file;
@@ -134,15 +135,16 @@ bool PreProcessing::loadModelFromFile(string filename){
     
     return true;
 }
+#endif
     
-bool PreProcessing::savePreProcessingSettingsToFile(fstream &file) const{
+bool PreProcessing::savePreProcessingSettingsToFile(ostream &file) const{
     
-    if( !file.is_open() ){
-        errorLog << "savePreProcessingSettingsToFile(fstream &file) - The file is not open!" << endl;
-        return false;
-    }
+//    if( !file.is_open() ){
+//        errorLog << "savePreProcessingSettingsToFile(fstream &file) - The file is not open!" << endl;
+//        return false;
+//    }
     
-    if( !MLBase::saveBaseSettingsToFile( file ) ){
+    if( !MLBase::saveBaseSettingsToStream( file ) ){
         errorLog << "savePreProcessingSettingsToFile(fstream &file) - Failed to save base settings to file!" << endl;
         return false;
     }
@@ -152,15 +154,15 @@ bool PreProcessing::savePreProcessingSettingsToFile(fstream &file) const{
     return true;
 }
     
-bool PreProcessing::loadPreProcessingSettingsFromFile(fstream &file){
+bool PreProcessing::loadPreProcessingSettingsFromFile(istream &file){
     
-    if( !file.is_open() ){
-        errorLog << "loadPreProcessingSettingsFromFile(fstream &file) - The file is not open!" << endl;
-        return false;
-    }
+//    if( !file.is_open() ){
+//        errorLog << "loadPreProcessingSettingsFromFile(fstream &file) - The file is not open!" << endl;
+//        return false;
+//    }
     
     //Try and load the base settings from the file
-    if( !MLBase::loadBaseSettingsFromFile( file ) ){
+    if( !MLBase::loadBaseSettingsFromStream( file ) ){
         errorLog << "loadPreProcessingSettingsFromFile(fstream &file) - Failed to load base settings from file!" << endl;
         return false;
     }

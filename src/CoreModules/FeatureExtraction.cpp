@@ -112,7 +112,8 @@ bool FeatureExtraction::clear(){
     
     return true;
 }
-    
+
+#ifndef __GRT_ARDUINO_BUILD__
 bool FeatureExtraction::saveFeatureExtractionSettingsToFile(fstream &file) const{
     
     if( !file.is_open() ){
@@ -120,13 +121,19 @@ bool FeatureExtraction::saveFeatureExtractionSettingsToFile(fstream &file) const
         return false;
     }
     
-    if( !MLBase::saveBaseSettingsToFile( file ) ) return false;
+    return saveFeatureExtractionSettingsToStream(file);
+}
+#endif
+    
+bool FeatureExtraction::saveFeatureExtractionSettingsToStream(ostream &file) const{
+    if( !MLBase::saveBaseSettingsToStream( file ) ) return false;
     
     file << "Initialized: " << initialized << endl;
     
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool FeatureExtraction::loadFeatureExtractionSettingsFromFile(fstream &file){
     
     if( !file.is_open() ){
@@ -134,8 +141,14 @@ bool FeatureExtraction::loadFeatureExtractionSettingsFromFile(fstream &file){
         return false;
     }
     
+    return loadFeatureExtractionSettingsFromStream(file);
+}
+#endif
+    
+bool FeatureExtraction::loadFeatureExtractionSettingsFromStream(istream &file){
+    
     //Try and load the base settings from the file
-    if( !MLBase::loadBaseSettingsFromFile( file ) ){
+    if( !MLBase::loadBaseSettingsFromStream( file ) ){
         return false;
     }
     

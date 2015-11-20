@@ -369,6 +369,7 @@ bool ClassificationData::scale(const vector<MinMax> &ranges,const double minTarg
     return true;
 }
     
+#ifndef __GRT_ARDUINO_BUILD__
 bool ClassificationData::save(const string &filename) const{
     
     //Check if the file should be saved as a csv file
@@ -390,7 +391,9 @@ bool ClassificationData::load(const string &filename){
     //Otherwise save it as a custom GRT file
     return loadDatasetFromFile( filename );
 }
+#endif
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool ClassificationData::saveDatasetToFile(const string &filename) const{
 
 	std::fstream file;
@@ -399,7 +402,15 @@ bool ClassificationData::saveDatasetToFile(const string &filename) const{
 	if( !file.is_open() ){
 		return false;
 	}
+    
+    bool res = saveDatasetToStream(file);
+    
+    file.close();
+    return res;
+}
+#endif
 
+bool ClassificationData::saveDatasetToStream(ostream &file) const{
 	file << "GRT_LABELLED_CLASSIFICATION_DATA_FILE_V1.0\n";
     file << "DatasetName: " << datasetName << endl;
     file << "InfoText: " << infoText << endl;
@@ -430,15 +441,14 @@ bool ClassificationData::saveDatasetToFile(const string &filename) const{
 		file << endl;
 	}
 
-	file.close();
 	return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool ClassificationData::loadDatasetFromFile(const string &filename){
 
 	std::fstream file;
 	file.open(filename.c_str(), std::ios::in);
-	UINT numClasses = 0;
 	clear();
 
 	if( !file.is_open() ){
@@ -446,13 +456,21 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
 		return false;
 	}
 
+    bool res = loadDatasetFromStream(file);
+    
+    file.close();
+    return res;
+}
+#endif
+
+bool ClassificationData::loadDatasetFromStream(istream &file){
 	string word;
+    UINT numClasses = 0;
 
 	//Check to make sure this is a file with the Training File Format
 	file >> word;
 	if(word != "GRT_LABELLED_CLASSIFICATION_DATA_FILE_V1.0"){
         errorLog << "loadDatasetFromFile(const string &filename) - could not find file header!" << endl;
-		file.close();
 		return false;
 	}
 
@@ -461,7 +479,6 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
 	if(word != "DatasetName:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find DatasetName header!" << endl;
         errorLog << word << endl;
-		file.close();
 		return false;
 	}
 	file >> datasetName;
@@ -469,7 +486,6 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
     file >> word;
 	if(word != "InfoText:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find InfoText header!" << endl;
-		file.close();
 		return false;
 	}
 
@@ -484,7 +500,6 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
 	//Get the number of dimensions in the training data
 	if( word != "NumDimensions:" ){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find NumDimensions header!" << endl;
-		file.close();
 		return false;
 	}
 	file >> numDimensions;
@@ -493,7 +508,6 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if( word != "TotalNumTrainingExamples:" && word != "TotalNumExamples:" ){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find TotalNumTrainingExamples header!" << endl;
-		file.close();
 		return false;
 	}
 	file >> totalNumSamples;
@@ -502,7 +516,6 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if(word != "NumberOfClasses:"){
         errorLog << "loadDatasetFromFile(string filename) - failed to find NumberOfClasses header!" << endl;
-		file.close();
 		return false;
 	}
 	file >> numClasses;
@@ -514,7 +527,6 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if(word != "ClassIDsAndCounters:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find ClassIDsAndCounters header!" << endl;
-		file.close();
 		return false;
 	}
 
@@ -528,7 +540,6 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if(word != "UseExternalRanges:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find UseExternalRanges header!" << endl;
-		file.close();
 		return false;
 	}
     file >> useExternalRanges;
@@ -546,7 +557,6 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if( word != "LabelledTrainingData:" && word != "Data:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find LabelledTrainingData header!" << endl;
-		file.close();
 		return false;
 	}
 
@@ -562,8 +572,6 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
 		}
         data[i].set(classLabel, sample);
 	}
-
-	file.close();
 	
     //Sort the class labels
     sortClassLabels();
@@ -571,6 +579,7 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
 	return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool ClassificationData::saveDatasetToCSVFile(const string &filename) const{
 
     std::fstream file;
@@ -579,7 +588,16 @@ bool ClassificationData::saveDatasetToCSVFile(const string &filename) const{
 	if( !file.is_open() ){
 		return false;
 	}
+    
+    bool res = saveDatasetToCSVStream(file);
+    
+    file.close();
+    
+    return res;
+}
+#endif
 
+bool ClassificationData::saveDatasetToCSVStream(ostream &file) const{
     //Write the data to the CSV file
     for(UINT i=0; i<totalNumSamples; i++){
 		file << data[i].getClassLabel();
@@ -589,11 +607,10 @@ bool ClassificationData::saveDatasetToCSVFile(const string &filename) const{
 		file << endl;
 	}
 
-	file.close();
-
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool ClassificationData::loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndex){
 
     numDimensions = 0;
@@ -611,6 +628,30 @@ bool ClassificationData::loadDatasetFromCSVFile(const string &filename,const UIN
         return false;
     }
     
+    return loadDatasetFromFileParser(parser,classLabelColumnIndex);
+}
+#endif
+
+bool ClassificationData::loadDatasetFromCSVStream(istream &file,const UINT classLabelColumnIndex){
+    numDimensions = 0;
+    datasetName = "NOT_SET";
+    infoText = "";
+    
+    //Clear any previous data
+    clear();
+    
+    //Parse the CSV file
+    FileParser parser;
+    
+    if( !parser.parseCSVFile(file,true) ){
+        errorLog << "loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndex) - Failed to parse CSV file!" << endl;
+        return false;
+    }
+    
+    return loadDatasetFromFileParser(parser,classLabelColumnIndex);
+}
+
+bool ClassificationData::loadDatasetFromFileParser(FileParser &parser,const UINT classLabelColumnIndex){
     if( !parser.getConsistentColumnSize() ){
         errorLog << "loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndexe) - The CSV file does not have a consistent number of columns!" << endl;
         return false;
@@ -1465,7 +1506,39 @@ MatrixDouble ClassificationData::getDataAsMatrixDouble() const{
     return d;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool ClassificationData::generateGaussDataset( const std::string filename, const UINT numSamples, const UINT numClasses, const UINT numDimensions, const double range, const double sigma ){
+    
+    ClassificationData data;
+    
+    generateGaussDataset(data, numSamples, numClasses, numDimensions, range, sigma);
+    
+    //Save the dataset to a CSV file
+    return data.save( filename );
+}
+#endif
+
+bool ClassificationData::generateGaussDataset( ostream &file, const UINT numSamples, const UINT numClasses, const UINT numDimensions, const double range, const double sigma ){
+    
+    ClassificationData data;
+
+    generateGaussDataset(data, numSamples, numClasses, numDimensions, range, sigma);
+
+    //Save the dataset to a GRT file
+    return data.saveDatasetToStream( file );
+}
+
+bool ClassificationData::generateGaussDatasetCSV( ostream &file, const UINT numSamples, const UINT numClasses, const UINT numDimensions, const double range, const double sigma ){
+    
+    ClassificationData data;
+    
+    generateGaussDataset(data, numSamples, numClasses, numDimensions, range, sigma);
+    
+    //Save the dataset to a CSV file
+    return data.saveDatasetToCSVStream( file );
+}
+
+bool ClassificationData::generateGaussDataset( ClassificationData &data, const UINT numSamples, const UINT numClasses, const UINT numDimensions, const double range, const double sigma ){
     
     Random random;
     
@@ -1478,7 +1551,6 @@ bool ClassificationData::generateGaussDataset( const std::string filename, const
     }
     
     //Use the model above to generate the main dataset
-    ClassificationData data;
     data.setNumDimensions( numDimensions );
     
     for(UINT i=0; i<numSamples; i++){
@@ -1498,8 +1570,5 @@ bool ClassificationData::generateGaussDataset( const std::string filename, const
         //Add the labeled sample to the dataset
         data.addSample( classLabel, sample );
     }
-    
-    //Save the dataset to a CSV file
-    return data.save( filename );
 }
 

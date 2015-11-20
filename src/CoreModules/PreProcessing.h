@@ -87,6 +87,7 @@ public:
      */
     virtual bool clear();
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      This saves the preprocessing settings to a file.
      This function should be overwritten by the derived class.
@@ -104,6 +105,7 @@ public:
      @return returns true if the settings were saved successfully, false otherwise
      */
     virtual bool loadModelFromFile(string filename);
+#endif
     
     /**
      This saves the preprocessing settings to a file.
@@ -112,7 +114,7 @@ public:
      @param fstream &file: a reference to the file to save the settings to
      @return returns true if the settings were saved successfully, false otherwise (the base class always returns false)
      */
-    virtual bool saveModelToFile(fstream &file) const{ return false; }
+    virtual bool saveModelToFile(ostream &file) const{ return false; }
     
     /**
      This loads the preprocessing settings from a file.
@@ -121,7 +123,7 @@ public:
      @param fstream &file: a reference to the file to load the settings from
      @return returns true if the settings were loaded successfully, false otherwise (the base class always returns false)
      */
-    virtual bool loadModelFromFile(fstream &file){ return false; }
+    virtual bool loadModelFromFile(istream &file){ return false; }
 	
     /**
      @return returns the pre processing type as a string, e.g. LowPassFilter
@@ -186,14 +188,14 @@ protected:
      
      @return returns true if the base settings were saved, false otherwise
      */
-    bool savePreProcessingSettingsToFile(fstream &file) const;
+    bool savePreProcessingSettingsToFile(ostream &file) const;
     
     /**
      Loads the core preprocessing settings from a file.
      
      @return returns true if the base settings were loaded, false otherwise
      */
-    bool loadPreProcessingSettingsFromFile(fstream &file);
+    bool loadPreProcessingSettingsFromFile(istream &file);
 
     string preProcessingType;
     bool initialized;

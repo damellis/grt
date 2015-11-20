@@ -266,6 +266,7 @@ public:
      */
     virtual bool print() const;
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      This saves the model to a file, it calls the saveModelToFile(string filename) function unless it is overwritten by the derived class.
      
@@ -281,7 +282,9 @@ public:
      @return returns true if the model was saved successfully, false otherwise
      */
     virtual bool load(const string filename);
+#endif
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      This saves the trained model to a file, it calls the saveModelToFile(fstream &file) function unless it is overwritten by the derived class.
      
@@ -289,6 +292,7 @@ public:
      @return returns true if the model was saved successfully, false otherwise
      */
     virtual bool saveModelToFile(string filename) const;
+#endif
     
     /**
      This saves the trained model to a file.
@@ -297,8 +301,9 @@ public:
      @param fstream &file: a reference to the file the model will be saved to
      @return returns true if the model was saved successfully, false otherwise
      */
-    virtual bool saveModelToFile(fstream &file) const;
+    virtual bool saveModelToFile(ostream &file) const;
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      This loads a trained model from a file, it calls the loadModelFromFile(fstream &file) function unless it is overwritten by the derived class.
      
@@ -306,6 +311,7 @@ public:
      @return returns true if the model was loaded successfully, false otherwise
      */
     virtual bool loadModelFromFile(string filename);
+#endif
     
     /**
      This loads a trained model from a file.
@@ -314,7 +320,7 @@ public:
      @param fstream &file: a reference to the file the model will be loaded from
      @return returns true if the model was loaded successfully, false otherwise
      */
-    virtual bool loadModelFromFile(fstream &file);
+    virtual bool loadModelFromFile(istream &file);
     
     /**
      This function adds the current model to the formatted stream.
@@ -659,19 +665,37 @@ public:
 
 protected:
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Saves the core base settings to a file.
      
      @return returns true if the base settings were saved, false otherwise
      */
     bool saveBaseSettingsToFile(fstream &file) const;
+#endif
     
+    /**
+     Saves the core base settings to an output stream.
+     
+     @return returns true if the base settings were saved, false otherwise
+     */
+    bool saveBaseSettingsToStream(ostream &file) const;
+
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Loads the core base settings from a file.
      
      @return returns true if the base settings were loaded, false otherwise
      */
     bool loadBaseSettingsFromFile(fstream &file);
+#endif
+    
+    /**
+     Loads the core base settings from an input stream.
+     
+     @return returns true if the base settings were loaded, false otherwise
+     */
+    bool loadBaseSettingsFromStream(istream &file);
     
     bool trained;
     bool useScaling;

@@ -235,6 +235,7 @@ public:
 	*/
     bool reset();
 
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      This function will save the entire pipeline to a file.  This includes all the modules types, settings, and models.
      This calls the older savePipelineToFile function.
@@ -251,7 +252,18 @@ public:
      @return bool returns true if the pipeline was saved successful, false otherwise
 	*/
     bool savePipelineToFile(const string &filename) const;
+#endif
+    
+    /**
+     This function will save the entire pipeline to an output stream.  This includes all the modules types, settings, and models.
+     This calls the older savePipelineToFile function.
+     
+     @param ostream &file: the output stream you want to save the pipeline to
+     @return bool returns true if the pipeline was saved successful, false otherwise
+     */
+    bool save(ostream &file) const;
 
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      This function will load an entire pipeline from a file.  This includes all the modules types, settings, and models.
      This calls the older loadPipelineFromFile function
@@ -268,6 +280,16 @@ public:
      @return bool returns true if the pipeline was loaded successful, false otherwise
 	*/
     bool loadPipelineFromFile(const string &filename);
+#endif
+    
+    /**
+     This function will load an entire pipeline from an input stream.  This includes all the modules types, settings, and models.
+     This calls the older loadPipelineFromFile function
+     
+     @param istream &file: the input stream you want to load the pipeline from
+     @return bool returns true if the pipeline was loaded successful, false otherwise
+     */
+    bool load(istream &file);
     
     /**
      This function will pass the input vector through any preprocessing or feature extraction modules added to the pipeline.  This function

@@ -122,21 +122,39 @@ protected:
      @return returns true if the module was initialized, false otherwise
      */
     bool init();
-    
+
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Saves the core context settings to a file.
      
      @return returns true if the base settings were saved, false otherwise
      */
     bool saveContextSettingsToFile(fstream &file) const;
+#endif
     
+    /**
+     Saves the core context settings to an output stream.
+     
+     @return returns true if the base settings were saved, false otherwise
+     */
+    bool saveContextSettingsToStream(ostream &file) const;
+    
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Loads the core context settings from a file.
      
      @return returns true if the base settings were loaded, false otherwise
      */
     bool loadContextSettingsFromFile(fstream &file);
+#endif
 
+    /**
+     Loads the core context settings from an input stream.
+     
+     @return returns true if the base settings were loaded, false otherwise
+     */
+    bool loadContextSettingsFromStream(istream &file);
+    
     string contextType;
     bool initialized;
     bool okToContinue;

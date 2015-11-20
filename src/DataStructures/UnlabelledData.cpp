@@ -179,6 +179,7 @@ bool UnlabelledData::scale(const vector<MinMax> &ranges,const double minTarget,c
     return true;
 }
     
+#ifndef __GRT_ARDUINO_BUILD__
 bool UnlabelledData::save(const string &filename) const{
     
     //Check if the file should be saved as a csv file
@@ -200,7 +201,9 @@ bool UnlabelledData::load(const string &filename){
     //Otherwise save it as a custom GRT file
     return loadDatasetFromFile( filename );
 }
+#endif
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool UnlabelledData::saveDatasetToFile(const string &filename) const{
 
 	std::fstream file;
@@ -210,6 +213,16 @@ bool UnlabelledData::saveDatasetToFile(const string &filename) const{
         errorLog << "saveDatasetToFile(const string &filename) - Failed to open file!" << endl;
 		return false;
 	}
+    
+    bool res = saveDatasetToStream(file);
+    
+    file.close();
+    
+    return res;
+}
+#endif
+
+bool UnlabelledData::saveDatasetToStream(ostream &file) const{
 
 	file << "GRT_UNLABELLED_DATA_FILE_V1.0\n";
     file << "DatasetName: " << datasetName << endl;
@@ -235,10 +248,10 @@ bool UnlabelledData::saveDatasetToFile(const string &filename) const{
 		file << endl;
 	}
 
-	file.close();
 	return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool UnlabelledData::loadDatasetFromFile(const string &filename){
 
 	std::fstream file;
@@ -249,14 +262,22 @@ bool UnlabelledData::loadDatasetFromFile(const string &filename){
         errorLog << "loadDatasetFromFile(const string &filename) - could not open file!" << endl;
 		return false;
 	}
-
+    
+    bool res = loadDatasetFromStream(file);
+    
+    file.close();
+    
+    return res;
+}
+#endif
+    
+bool UnlabelledData::loadDatasetFromStream(istream &file){
 	string word;
 
 	//Check to make sure this is a file with the Training File Format
 	file >> word;
 	if( word != "GRT_UNLABELLED_DATA_FILE_V1.0" && word != "GRT_UNLABELLED_CLASSIFICATION_DATA_FILE_V1.0" ){
         errorLog << "loadDatasetFromFile(const string &filename) - could not find file header!" << endl;
-		file.close();
 		return false;
 	}
 
@@ -264,7 +285,6 @@ bool UnlabelledData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if(word != "DatasetName:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find DatasetName!" << endl;
-		file.close();
 		return false;
 	}
 	file >> datasetName;
@@ -272,7 +292,6 @@ bool UnlabelledData::loadDatasetFromFile(const string &filename){
     file >> word;
 	if(word != "InfoText:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find InfoText!" << endl;
-		file.close();
 		return false;
 	}
 
@@ -287,7 +306,6 @@ bool UnlabelledData::loadDatasetFromFile(const string &filename){
 	//Get the number of dimensions in the training data
 	if(word != "NumDimensions:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find DatasetName!" << endl;
-		file.close();
 		return false;
 	}
 	file >> numDimensions;
@@ -296,7 +314,6 @@ bool UnlabelledData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if(word != "TotalNumTrainingExamples:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find DatasetName!" << endl;
-		file.close();
 		return false;
 	}
 	file >> totalNumSamples;
@@ -305,7 +322,6 @@ bool UnlabelledData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if(word != "UseExternalRanges:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find DatasetName!" << endl;
-		file.close();
 		return false;
 	}
     file >> useExternalRanges;
@@ -323,7 +339,6 @@ bool UnlabelledData::loadDatasetFromFile(const string &filename){
 	file >> word;
 	if(word != "UnlabelledTrainingData:"){
         errorLog << "loadDatasetFromFile(const string &filename) - failed to find DatasetName!" << endl;
-		file.close();
 		return false;
 	}
 	data.resize( totalNumSamples, VectorDouble(numDimensions) );
@@ -334,11 +349,10 @@ bool UnlabelledData::loadDatasetFromFile(const string &filename){
 		}
 	}
 
-	file.close();
 	return true;
 }
 
-
+#ifndef __GRT_ARDUINO_BUILD__
 bool UnlabelledData::saveDatasetToCSVFile(const string &filename) const{
 
     std::fstream file;
@@ -348,7 +362,16 @@ bool UnlabelledData::saveDatasetToCSVFile(const string &filename) const{
         errorLog << "saveDatasetToCSVFile(const string &filename) - Failed to open file!" << endl;
 		return false;
 	}
+    
+    bool res = saveDatasetToCSVStream(file);
+    
+    file.close();
+    
+    return res;
+}
+#endif
 
+bool UnlabelledData::saveDatasetToCSVStream(ostream &file) const{
     //Write the data to the CSV file
     for(UINT i=0; i<totalNumSamples; i++){
 		for(UINT j=0; j<numDimensions; j++){
@@ -358,11 +381,10 @@ bool UnlabelledData::saveDatasetToCSVFile(const string &filename) const{
 		file << endl;
 	}
 
-	file.close();
-
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool UnlabelledData::loadDatasetFromCSVFile(const string &filename){
 
     string value;
@@ -379,6 +401,32 @@ bool UnlabelledData::loadDatasetFromCSVFile(const string &filename){
         errorLog << "loadDatasetFromCSVFile(const string &filename) - Failed to parse CSV file!" << endl;
         return false;
     }
+    
+    return loadDatasetFromFileParser(parser);
+}
+#endif
+    
+bool UnlabelledData::loadDatasetFromCSVStream(istream &file){
+    
+    string value;
+    datasetName = "NOT_SET";
+    infoText = "";
+    
+    //Clear any previous data
+    clear();
+    
+    //Parse the CSV file
+    FileParser parser;
+    
+    if( !parser.parseCSVFile(file,true) ){
+        errorLog << "loadDatasetFromCSVFile(const string &filename) - Failed to parse CSV file!" << endl;
+        return false;
+    }
+    
+    return loadDatasetFromFileParser(parser);
+}
+
+bool UnlabelledData::loadDatasetFromFileParser(FileParser &parser) {
     
     if( !parser.getConsistentColumnSize() ){
         errorLog << "loadDatasetFromCSVFile(const string &filename) - The CSV file does not have a consistent number of columns!" << endl;

@@ -37,4 +37,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     #define __GRT_LINUX_BUILD__
 #endif
 
+#if defined(ARDUINO)
+    #define __GRT_ARDUINO_BUILD__
+#endif
+
 #endif //GRT_VERSION_INFO_HEADER

@@ -95,7 +95,7 @@ public:
      @param fstream &file: a reference to the file to save the settings to
      @return returns true if the settings were saved successfully, false otherwise (the base class always returns false)
      */
-    virtual bool saveModelToFile(fstream &file) const{ return false; }
+    virtual bool saveModelToFile(ostream &file) const{ return false; }
     
     /**
      This loads the feature extraction settings from a file.
@@ -104,7 +104,7 @@ public:
      @param fstream &file: a reference to the file to load the settings from
      @return returns true if the settings were loaded successfully, false otherwise (the base class always returns false)
      */
-    virtual bool loadModelFromFile(fstream &file){ return false; }
+    virtual bool loadModelFromFile(istream &file){ return false; }
 	
     /**
      Returns the feature extraction type as a string.
@@ -179,20 +179,38 @@ protected:
      */
     bool init();
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Saves the core base settings to a file.
      
      @return returns true if the base settings were saved, false otherwise
      */
     bool saveFeatureExtractionSettingsToFile(fstream &file) const;
+#endif
     
+    /**
+     Saves the core base settings to an output stream.
+     
+     @return returns true if the base settings were saved, false otherwise
+     */
+    bool saveFeatureExtractionSettingsToStream(ostream &file) const;
+    
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Loads the core base settings from a file.
      
      @return returns true if the base settings were loaded, false otherwise
      */
     bool loadFeatureExtractionSettingsFromFile(fstream &file);
+#endif
 
+    /**
+     Loads the core base settings from an input stream.
+     
+     @return returns true if the base settings were loaded, false otherwise
+     */
+    bool loadFeatureExtractionSettingsFromStream(istream &file);
+    
     string featureExtractionType;
     bool initialized;
     bool featureDataReady;

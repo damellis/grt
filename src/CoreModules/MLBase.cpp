@@ -128,6 +128,7 @@ bool MLBase::clear(){
 
 bool MLBase::print() const { cout << getModelAsString(); return true; }
     
+#ifndef __GRT_ARDUINO_BUILD__
 bool MLBase::save(const string filename) const {
     return saveModelToFile( filename );
 }
@@ -147,9 +148,11 @@ bool MLBase::saveModelToFile(string filename) const{
     
     return true;
 }
+#endif
 
-bool MLBase::saveModelToFile(fstream &file) const { return false; }
+bool MLBase::saveModelToFile(ostream &file) const { return false; }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool MLBase::load(const string filename){
     return loadModelFromFile(filename);
 }
@@ -168,8 +171,9 @@ bool MLBase::loadModelFromFile(string filename){
     
     return true;
 }
+#endif
 
-bool MLBase::loadModelFromFile(fstream &file){ return false; }
+bool MLBase::loadModelFromFile(istream &file){ return false; }
     
 bool MLBase::getModel(ostream &stream) const { return true; }
     
@@ -336,6 +340,7 @@ vector< TrainingResult > MLBase::getTrainingResults() const{
     return trainingResults;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool MLBase::saveBaseSettingsToFile(fstream &file) const{
     
     if( !file.is_open() ){
@@ -343,6 +348,11 @@ bool MLBase::saveBaseSettingsToFile(fstream &file) const{
         return false;
     }
     
+    return saveBaseSettingsToStream(file);
+}
+#endif
+    
+bool MLBase::saveBaseSettingsToStream(ostream &file) const{
     file << "Trained: " << trained << endl;
     file << "UseScaling: " << useScaling << endl;
     file << "NumInputDimensions: " << numInputDimensions << endl;
@@ -359,15 +369,21 @@ bool MLBase::saveBaseSettingsToFile(fstream &file) const{
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool MLBase::loadBaseSettingsFromFile(fstream &file){
-    
-    //Clear any previous setup
-    clear();
     
     if( !file.is_open() ){
         errorLog << "loadBaseSettingsFromFile(fstream &file) - The file is not open!" << endl;
         return false;
     }
+    
+    return loadBaseSettingsFromStream(file);
+}
+#endif
+    
+bool MLBase::loadBaseSettingsFromStream(istream &file){
+    //Clear any previous setup
+    clear();
     
     string word;
     

@@ -223,6 +223,7 @@ public:
      */
 	TimeSeriesClassificationData getAllTrainingExamplesWithClassLabel(const UINT classLabel) const;
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Saves the data to a file.
      If the file format ends in '.csv' then the data will be saved as comma-seperated-values, otherwise it will be saved
@@ -279,7 +280,45 @@ public:
 	 @return true if the data was loaded successfully, false otherwise
      */
 	bool loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndex=0);
+#endif
+
+    /**
+     Saves the labelled timeseries classification data to a custom file format.
+     
+     @param ostream &file: the output stream the data will be saved to
+     @return true if the data was saved successfully, false otherwise
+     */
+    bool saveDatasetToStream(ostream &file);
     
+    /**
+     Saves the data to a CSV file.
+     This will save the timeseries counter as the first column, the class label as the second column, and the sample data as the following N columns, where N is the number of dimensions in the data.  Each row will represent a sample.
+     
+     @param ostream &file: the output stream the data will be saved to
+     @return true if the data was saved successfully, false otherwise
+     */
+    bool saveDatasetToCSVStream(ostream &file);
+    
+    /**
+     Loads the data from a custom file format.
+     
+     @param istream &file: the input stream the data will be loaded from
+     @return true if the data was loaded successfully, false otherwise
+     */
+    bool loadDatasetFromStream(istream &file);
+    
+    /**
+     Loads the labelled timeseries classification data from a CSV file.
+     This assumes the data is formatted with each row representing a sample.
+     The class label should be the first column followed by the sample data as the following N columns, where N is the number of dimensions in the data.
+     If the class label is not the first column, you should set the 2nd argument (UINT classLabelColumnIndex) to the column index that contains the class label.
+     
+     @param istream &file: the input stream the data will be loaded from
+     @param const UINT classLabelColumnIndex: the index of the column containing the class label. Default value = 0
+     @return true if the data was loaded successfully, false otherwise
+     */
+    bool loadDatasetFromCSVStream(istream &file,const UINT classLabelColumnIndex=0);
+
     /**
      Prints the dataset info (such as its name and infoText) and the stats (such as the number of examples, number of dimensions, number of classes, etc.)
      to the std out.
@@ -438,6 +477,8 @@ public:
     vector< UINT > getClassLabels() const;
 
 protected:
+    bool loadDatasetFromFileParser(FileParser &parser,const UINT classLabelColumnIndex=0);
+
     string datasetName;                                     ///< The name of the dataset
     string infoText;                                        ///< Some infoText about the dataset
 	UINT numDimensions;										///< The number of dimensions in the dataset

@@ -91,6 +91,7 @@ bool PostProcessing::init(){
     return true;
 }
     
+#ifndef __GRT_ARDUINO_BUILD__
 bool PostProcessing::saveModelToFile(string filename) const{
     
     std::fstream file;
@@ -119,30 +120,31 @@ bool PostProcessing::loadModelFromFile(string filename){
     
     return true;
 }
+#endif
 
-bool PostProcessing::savePostProcessingSettingsToFile(fstream &file) const{
+bool PostProcessing::savePostProcessingSettingsToFile(ostream &file) const{
     
-    if( !file.is_open() ){
-        errorLog << "savePostProcessingSettingsToFile(fstream &file) - The file is not open!" << endl;
-        return false;
-    }
+//    if( !file.is_open() ){
+//        errorLog << "savePostProcessingSettingsToFile(fstream &file) - The file is not open!" << endl;
+//        return false;
+//    }
     
-    if( !MLBase::saveBaseSettingsToFile( file ) ) return false;
+    if( !MLBase::saveBaseSettingsToStream( file ) ) return false;
     
     file << "Initialized: " << initialized << endl;
     
     return true;
 }
 
-bool PostProcessing::loadPostProcessingSettingsFromFile(fstream &file){
+bool PostProcessing::loadPostProcessingSettingsFromFile(istream &file){
     
-    if( !file.is_open() ){
-        errorLog << "loadPostProcessingSettingsFromFile(fstream &file) - The file is not open!" << endl;
-        return false;
-    }
+//    if( !file.is_open() ){
+//        errorLog << "loadPostProcessingSettingsFromFile(fstream &file) - The file is not open!" << endl;
+//        return false;
+//    }
     
     //Try and load the base settings from the file
-    if( !MLBase::loadBaseSettingsFromFile( file ) ){
+    if( !MLBase::loadBaseSettingsFromStream( file ) ){
         return false;
     }
     

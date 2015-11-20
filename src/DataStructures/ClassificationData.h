@@ -252,7 +252,8 @@ public:
      @return true if the data was scaled correctly, false otherwise
     */
     bool scale(const vector<MinMax> &ranges,const double minTarget,const double maxTarget);
-	
+
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Saves the classification data to a file.
      If the file format ends in '.csv' then the data will be saved as comma-seperated-values, otherwise it will be saved
@@ -309,6 +310,44 @@ public:
      @return true if the data was loaded successfully, false otherwise
      */
     bool loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndex = 0);
+#endif
+
+    /**
+     Saves the labelled classification data to a custom file format.
+     
+     @param ostream &file: the output stream the data will be saved to
+     @return true if the data was saved successfully, false otherwise
+     */
+    bool saveDatasetToStream(ostream &file) const;
+    
+    /**
+     Loads the labelled classification data from a custom file format.
+     
+     @param istream &file: the input stream the data will be loaded from
+     @return true if the data was loaded successfully, false otherwise
+     */
+    bool loadDatasetFromStream(istream &file);
+    
+    /**
+     Saves the labelled classification data to a CSV file.
+     This will save the class label as the first column and the sample data as the following N columns, where N is the number of dimensions in the data.  Each row will represent a sample.
+     
+     @param ostream &file: the output stream the data will be saved to
+     @return true if the data was saved successfully, false otherwise
+     */
+    bool saveDatasetToCSVStream(ostream &file) const;
+    
+    /**
+     Loads the labelled classification data from a CSV file.
+     This assumes the data is formatted with each row representing a sample.
+     The class label should be the first column followed by the sample data as the following N columns, where N is the number of dimensions in the data.
+     If the class label is not the first column, you should set the 2nd argument (UINT classLabelColumnIndex) to the column index that contains the class label.
+     
+     @param istream &file: the input stream the data will be loaded from
+     @param const UINT classLabelColumnIndex: the index of the column containing the class label. Default value = 0
+     @return true if the data was loaded successfully, false otherwise
+     */
+    bool loadDatasetFromCSVStream(istream &file,const UINT classLabelColumnIndex = 0);
     
     /**
      Prints the dataset info (such as its name and infoText) and the stats (such as the number of examples, number of dimensions, number of classes, etc.)
@@ -589,6 +628,7 @@ public:
     */
     MatrixDouble getDataAsMatrixDouble() const;
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Generates a labeled dataset that can be used for basic training/testing/validation for ClassificationData.
      
@@ -607,8 +647,49 @@ public:
      @return returns true if the dataset was created successfully, false otherwise
      */
     static bool generateGaussDataset( const std::string filename, const UINT numSamples = 10000, const UINT numClasses = 10, const UINT numDimensions = 3, const double range = 10, const double sigma = 1 );
-
+#endif
+    
+    /**
+     Generates a labeled dataset that can be used for basic training/testing/validation for ClassificationData.
+     
+     Samples in the dataset will be generated based on K randomly select models, with Gaussian noise.  K is set by the numClasses argument.
+     
+     The range of each dimension will be [-range range].  Sigma controls the amount of Gaussian noise added.
+     
+     The dataset will be saved to the output stream specified by file (in a custom file format).
+     
+     @param const std::string filename: the name of the file the dataset will be saved to
+     @param const UINT numSamples: the total number of samples in the dataset
+     @param const UINT numClasses: the number of classes in the dataset
+     @param const UINT numDimensions: the number of dimensions in the dataset
+     @param const double range: the range the data will be sampled from, range will be [-range range] for each dimension
+     @param const double sigma: the amount of Gaussian noise
+     @return returns true if the dataset was created successfully, false otherwise
+     */
+    static bool generateGaussDataset( ostream &file, const UINT numSamples = 10000, const UINT numClasses = 10, const UINT numDimensions = 3, const double range = 10, const double sigma = 1 );
+    
+    /**
+     Generates a labeled dataset that can be used for basic training/testing/validation for ClassificationData.
+     
+     Samples in the dataset will be generated based on K randomly select models, with Gaussian noise.  K is set by the numClasses argument.
+     
+     The range of each dimension will be [-range range].  Sigma controls the amount of Gaussian noise added.
+     
+     The dataset will be saved to the output stream specified by file (in CSV file format).
+     
+     @param const std::string filename: the name of the file the dataset will be saved to
+     @param const UINT numSamples: the total number of samples in the dataset
+     @param const UINT numClasses: the number of classes in the dataset
+     @param const UINT numDimensions: the number of dimensions in the dataset
+     @param const double range: the range the data will be sampled from, range will be [-range range] for each dimension
+     @param const double sigma: the amount of Gaussian noise
+     @return returns true if the dataset was created successfully, false otherwise
+     */
+    static bool generateGaussDatasetCSV( ostream &file, const UINT numSamples = 10000, const UINT numClasses = 10, const UINT numDimensions = 3, const double range = 10, const double sigma = 1 );
+    
 private:
+    bool loadDatasetFromFileParser(FileParser &parser,const UINT classLabelColumnIndex);
+    static bool generateGaussDataset( ClassificationData &data, const UINT numSamples = 10000, const UINT numClasses = 10, const UINT numDimensions = 3, const double range = 10, const double sigma = 1 );
     
     string datasetName;                                     ///< The name of the dataset
     string infoText;                                        ///< Some infoText about the dataset

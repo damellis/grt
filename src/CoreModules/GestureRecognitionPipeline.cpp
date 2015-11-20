@@ -1956,7 +1956,8 @@ bool GestureRecognitionPipeline::reset(){
     
     return true;
 }
-    
+
+#ifndef __GRT_ARDUINO_BUILD__
 bool GestureRecognitionPipeline::save(const string &filename) const {
     return savePipelineToFile( filename );
 }
@@ -1977,6 +1978,17 @@ bool GestureRecognitionPipeline::savePipelineToFile(const string &filename) cons
         return false;
     }
     
+    bool res = save(file);
+
+    //Close the file
+    file.close();
+    
+    return res;
+}
+#endif
+
+bool GestureRecognitionPipeline::save(ostream &file) const {
+
     //Write the pipeline header info
     file << "GRT_PIPELINE_FILE_V3.0\n";
     file << "PipelineMode: " << getPipelineModeAsString() << endl;
@@ -2029,7 +2041,6 @@ bool GestureRecognitionPipeline::savePipelineToFile(const string &filename) cons
         file << "PreProcessingModule_" << Util::intToString(i+1) << endl;
         if( !preProcessingModules[i]->saveModelToFile( file ) ){
             errorLog << "Failed to write preprocessing module " << i << " settings to file!" << endl;
-            file.close();
             return false;
         }
     }
@@ -2039,7 +2050,6 @@ bool GestureRecognitionPipeline::savePipelineToFile(const string &filename) cons
         file << "FeatureExtractionModule_" << Util::intToString(i+1) << endl;
         if( !featureExtractionModules[i]->saveModelToFile( file ) ){
             errorLog << "Failed to write feature extraction module " << i << " settings to file!" << endl;
-            file.close();
             return false;
         }
     }
@@ -2051,7 +2061,6 @@ bool GestureRecognitionPipeline::savePipelineToFile(const string &filename) cons
             if( getIsClassifierSet() ){
                 if( !classifier->saveModelToFile( file ) ){
                     errorLog << "Failed to write classifier model to file!" << endl;
-                    file.close();
                     return false;
                 }
             }
@@ -2060,7 +2069,6 @@ bool GestureRecognitionPipeline::savePipelineToFile(const string &filename) cons
             if( getIsRegressifierSet() ){
                 if( !regressifier->saveModelToFile( file ) ){
                     errorLog << "Failed to write regressifier model to file!" << endl;
-                    file.close();
                     return false;
                 }
             }
@@ -2069,7 +2077,6 @@ bool GestureRecognitionPipeline::savePipelineToFile(const string &filename) cons
             if( getIsClustererSet() ){
                 if( !clusterer->saveModelToFile( file ) ){
                     errorLog << "Failed to write clusterer model to file!" << endl;
-                    file.close();
                     return false;
                 }
             }
@@ -2083,17 +2090,14 @@ bool GestureRecognitionPipeline::savePipelineToFile(const string &filename) cons
         file << "PostProcessingModule_" << Util::intToString(i+1) << endl;
         if( !postProcessingModules[i]->saveModelToFile( file ) ){
             errorLog <<"Failed to write post processing module " << i << " settings to file!" << endl;
-            file.close();
             return false;
         }
     }
     
-    //Close the file
-    file.close();
-    
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool GestureRecognitionPipeline::load(const string &filename){
     return loadPipelineFromFile( filename );
 }
@@ -2111,14 +2115,23 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
         errorLog << "loadPipelineFromFile(string filename) - Failed to open file with filename: " << filename << endl;
         return false;
     }
+    
+    bool res = load(file);
+    
+    //Close the file
+    file.close();
+    
+    return res;
+}
+#endif
 
+bool GestureRecognitionPipeline::load(istream &file){
 	string word;
 	
 	//Load the file header
 	file >> word;
 	if( word != "GRT_PIPELINE_FILE_V3.0" ){
         errorLog << "loadPipelineFromFile(string filename) - Failed to read file header" << endl;
-		file.close();
         return false;
 	}
 	
@@ -2126,7 +2139,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 	file >> word;
 	if( word != "PipelineMode:" ){
         errorLog << "loadPipelineFromFile(string filename) - Failed to read PipelineMode" << endl;
-		file.close();
         return false;
 	}
 	file >> word;
@@ -2136,7 +2148,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 	file >> word;
 	if( word != "NumPreprocessingModules:" ){
         errorLog << "loadPipelineFromFile(string filename) - Failed to read NumPreprocessingModules header" << endl;
-		file.close();
         return false;
 	}
 	unsigned int numPreprocessingModules;
@@ -2146,7 +2157,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 	file >> word;
 	if( word != "NumFeatureExtractionModules:" ){
         errorLog << "loadPipelineFromFile(string filename) - Failed to read NumFeatureExtractionModules header" << endl;
-		file.close();
         return false;
 	}
 	unsigned int numFeatureExtractionModules;
@@ -2156,7 +2166,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 	file >> word;
 	if( word != "NumPostprocessingModules:" ){
         errorLog << "loadPipelineFromFile(string filename) - Failed to read NumPostprocessingModules header" << endl;
-		file.close();
         return false;
 	}
 	unsigned int numPostprocessingModules;
@@ -2166,7 +2175,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 	file >> word;
 	if( word != "Trained:" ){
         	errorLog << "loadPipelineFromFile(string filename) - Failed to read Trained header" << endl;
-		file.close();
         	return false;
 	}
 	file >> trained;
@@ -2175,7 +2183,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 	file >> word;
 	if( word != "Info:" ){
     	errorLog << "loadPipelineFromFile(string filename) - Failed to read Info header" << endl;
-    	file.close();
     	return false;
 	}
 	info = "";
@@ -2194,7 +2201,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 	//Load the preprocessing module datatypes and initialize the modules
 	if( word != "PreProcessingModuleDatatypes:" ){
         errorLog << "loadPipelineFromFile(string filename) - Failed to read PreProcessingModuleDatatypes" << endl;
-		file.close();
         return false;
 	}
     for(UINT i=0; i<numPreprocessingModules; i++){
@@ -2202,7 +2208,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 		preProcessingModules[i] = PreProcessing::createInstanceFromString( word );
 		if( preProcessingModules[i] == NULL ){
             errorLog << "loadPipelineFromFile(string filename) - Failed to create preprocessing instance from string: " << word << endl;
-			file.close();
 	        return false;
 		}
     }
@@ -2211,7 +2216,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 	file >> word;
 	if( word != "FeatureExtractionModuleDatatypes:" ){
         errorLog << "loadPipelineFromFile(string filename) - Failed to read FeatureExtractionModuleDatatypes" << endl;
-		file.close();
         return false;
 	}
     for(UINT i=0; i<numFeatureExtractionModules; i++){
@@ -2219,7 +2223,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 		featureExtractionModules[i] = FeatureExtraction::createInstanceFromString( word );
 		if( featureExtractionModules[i] == NULL ){
             errorLog << "loadPipelineFromFile(string filename) - Failed to create feature extraction instance from string: " << word << endl;
-			file.close();
 	        return false;
 		}
     }
@@ -2231,7 +2234,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 			file >> word;
 			if( word != "ClassificationModuleDatatype:" ){
                 errorLog << "loadPipelineFromFile(string filename) - Failed to read ClassificationModuleDatatype" << endl;
-				file.close();
 		        return false;
 			}
 			//Load the classifier type
@@ -2241,7 +2243,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 			classifier = Classifier::createInstanceFromString( word );
 			if( classifier == NULL ){
                 errorLog << "loadPipelineFromFile(string filename) - Failed to create classifier instance from string: " << word << endl;
-				file.close();
 		        return false;
 			}
             break;
@@ -2249,7 +2250,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 			file >> word;
 			if( word != "RegressionModuleDatatype:" ){
                 errorLog << "loadPipelineFromFile(string filename) - Failed to read RegressionModuleDatatype" << endl;
-				file.close();
 		        return false;
 			}
 			//Load the regressifier type
@@ -2259,7 +2259,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 			regressifier = Regressifier::createInstanceFromString( word );
 			if( regressifier == NULL ){
                 errorLog << "loadPipelineFromFile(string filename) - Failed to create regressifier instance from string: " << word << endl;
-				file.close();
 		        return false;
 			}
             break;
@@ -2267,7 +2266,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
             file >> word;
 			if( word != "ClusterModuleDatatype:" ){
                 errorLog << "loadPipelineFromFile(string filename) - Failed to read ClusterModuleDatatype" << endl;
-				file.close();
 		        return false;
 			}
 			//Load the clusterer type
@@ -2277,7 +2275,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 			clusterer = Clusterer::createInstanceFromString( word );
 			if( clusterer == NULL ){
                 errorLog << "loadPipelineFromFile(string filename) - Failed to create clusterer instance from string: " << word << endl;
-				file.close();
 		        return false;
 			}
             break;
@@ -2289,7 +2286,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 	file >> word;
 	if( word != "PostProcessingModuleDatatypes:" ){
         errorLog << "loadPipelineFromFile(string filename) - Failed to read PostProcessingModuleDatatypes" << endl;
-		file.close();
 	    return false;
 	}
 	for(UINT i=0; i<numPostprocessingModules; i++){
@@ -2303,7 +2299,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 		file >> word;
         if( !preProcessingModules[i]->loadModelFromFile( file ) ){
             errorLog << "Failed to load preprocessing module " << i << " settings from file!" << endl;
-            file.close();
             return false;
         }
     }
@@ -2314,7 +2309,6 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 		file >> word;
 	    if( !featureExtractionModules[i]->loadModelFromFile( file ) ){
             errorLog << "Failed to load feature extraction module " << i << " settings from file!" << endl;
-	        file.close();
 	        return false;
 	    }
 	}
@@ -2326,21 +2320,18 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
         case CLASSIFICATION_MODE:
                if( !classifier->loadModelFromFile( file ) ){
                    errorLog << "Failed to load classifier model from file!" << endl;
-                   file.close();
                    return false;
                }
             break;
         case REGRESSION_MODE:
                if( !regressifier->loadModelFromFile( file ) ){
                    errorLog << "Failed to load regressifier model from file!" << endl;
-                   file.close();
                    return false;
                }
             break;
         case CLUSTER_MODE:
             if( !clusterer->loadModelFromFile( file ) ){
                 errorLog << "Failed to load cluster model from file!" << endl;
-                file.close();
                 return false;
             }
             break;
@@ -2354,13 +2345,9 @@ bool GestureRecognitionPipeline::loadPipelineFromFile(const string &filename){
 		file >> word;
         if( !postProcessingModules[i]->loadModelFromFile( file ) ){
             errorLog << "Failed to load post processing module " << i << " settings from file!" << endl;
-            file.close();
             return false;
         }
     }
-    
-    //Close the file
-    file.close();
     
     //Set the expected input vector size
     inputVectorDimensions = 0;

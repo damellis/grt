@@ -475,6 +475,7 @@ bool KNN::clear(){
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool KNN::saveModelToFile(fstream &file) const{
     
     if(!file.is_open())
@@ -483,11 +484,17 @@ bool KNN::saveModelToFile(fstream &file) const{
         return false;
     }
     
+    return saveModelToStream(file);
+}
+#endif
+    
+bool KNN::saveModelToStream(ostream &file) const{
+    
     //Write the header info
     file << "GRT_KNN_MODEL_FILE_V2.0\n";
     
     //Write the classifier settings to the file
-    if( !Classifier::saveBaseSettingsToFile(file) ){
+    if( !Classifier::saveBaseSettingsToStream(file) ){
         errorLog <<"saveModelToFile(fstream &file) - Failed to save classifier base settings to file!" << endl;
 		return false;
     }
@@ -527,7 +534,8 @@ bool KNN::saveModelToFile(fstream &file) const{
     
     return true;
 }
-    
+
+#ifndef __GRT_ARDUINO_BUILD__
 bool KNN::loadModelFromFile(fstream &file){
     
     if(!file.is_open())
@@ -536,6 +544,11 @@ bool KNN::loadModelFromFile(fstream &file){
         return false;
     }
     
+    return loadModelFromStream(file);
+}
+#endif
+    
+bool KNN::loadModelFromStream(istream &file){
     std::string word;
     
     file >> word;
@@ -552,7 +565,7 @@ bool KNN::loadModelFromFile(fstream &file){
     }
     
     //Load the base settings from the file
-    if( !Classifier::loadBaseSettingsFromFile(file) ){
+    if( !Classifier::loadBaseSettingsFromStream(file) ){
         errorLog << "loadModelFromFile(string filename) - Failed to load base settings from file!" << endl;
         return false;
     }
@@ -757,7 +770,7 @@ double KNN::computeManhattanDistance(const VectorDouble &a,const VectorDouble &b
     return dist;
 }
     
-bool KNN::loadLegacyModelFromFile( fstream &file ){
+bool KNN::loadLegacyModelFromFile( istream &file ){
     
     string word;
     

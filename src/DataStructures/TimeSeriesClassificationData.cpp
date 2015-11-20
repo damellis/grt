@@ -303,6 +303,7 @@ bool TimeSeriesClassificationData::scale(const vector<MinMax> &ranges,const doub
     return true;
 }
     
+#ifndef __GRT_ARDUINO_BUILD__
 bool TimeSeriesClassificationData::save(const string &filename) const{
     
     //Check if the file should be saved as a csv file
@@ -324,7 +325,9 @@ bool TimeSeriesClassificationData::load(const string &filename){
     //Otherwise save it as a custom GRT file
     return loadDatasetFromFile( filename );
 }
-
+#endif
+    
+#ifndef __GRT_ARDUINO_BUILD__
 bool TimeSeriesClassificationData::saveDatasetToFile(const string fileName) const{
 
 	std::fstream file;
@@ -334,7 +337,16 @@ bool TimeSeriesClassificationData::saveDatasetToFile(const string fileName) cons
         errorLog << "saveDatasetToFile(string fileName) -  Failed to open file!" << endl;
 		return false;
 	}
-
+    
+    bool res = saveDatasetToStream(file);
+    
+    file.close();
+    
+    return res;
+}
+#endif
+    
+bool TimeSeriesClassificationData::saveDatasetToStream(ostream &file) const{
 	file << "GRT_LABELLED_TIME_SERIES_CLASSIFICATION_DATA_FILE_V1.0\n";
     file << "DatasetName: " << datasetName << endl;
     file << "InfoText: " << infoText << endl;
@@ -370,28 +382,37 @@ bool TimeSeriesClassificationData::saveDatasetToFile(const string fileName) cons
 		}
 	}
 
-	file.close();
 	return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 
 	std::fstream file;
 	file.open(filename.c_str(), std::ios::in);
-	UINT numClasses = 0;
 	clear();
 
 	if( !file.is_open() ){
 		errorLog << "loadDatasetFromFile(string filename) - FILE NOT OPEN!" << endl;
 		return false;
 	}
+    
+    bool res = loadDatasetFromStream(file);
+    
+    file.close();
+    
+    return res;
+}
+#endif
+    
+bool TimeSeriesClassificationData::loadDatasetFromStream(istream &file){
 
 	string word;
+    UINT numClasses = 0;
 
 	//Check to make sure this is a file with the Training File Format
 	file >> word;
 	if(word != "GRT_LABELLED_TIME_SERIES_CLASSIFICATION_DATA_FILE_V1.0"){
-		file.close();
         clear();
         errorLog << "loadDatasetFromFile(string filename) - Failed to find file header!" << endl;
 		return false;
@@ -401,7 +422,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 	file >> word;
 	if(word != "DatasetName:"){
         errorLog << "loadDatasetFromFile(string filename) - failed to find DatasetName!" << endl;
-		file.close();
 		return false;
 	}
 	file >> datasetName;
@@ -409,7 +429,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
     file >> word;
 	if(word != "InfoText:"){
         errorLog << "loadDatasetFromFile(string filename) - failed to find InfoText!" << endl;
-		file.close();
 		return false;
 	}
 
@@ -423,7 +442,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 
 	//Get the number of dimensions in the training data
 	if(word != "NumDimensions:"){
-		file.close();
         clear();
         errorLog << "loadDatasetFromFile(string filename) - Failed to find NumDimensions!" << endl;
 		return false;
@@ -433,7 +451,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 	//Get the total number of training examples in the training data
 	file >> word;
 	if(word != "TotalNumTrainingExamples:"){
-		file.close();
         clear();
         errorLog << "loadDatasetFromFile(string filename) - Failed to find TotalNumTrainingExamples!" << endl;
 		return false;
@@ -443,7 +460,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 	//Get the total number of classes in the training data
 	file >> word;
 	if(word != "NumberOfClasses:"){
-		file.close();
         clear();
         errorLog << "loadDatasetFromFile(string filename) - Failed to find NumberOfClasses!" << endl;
 		return false;
@@ -456,7 +472,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 	//Get the total number of classes in the training data
 	file >> word;
 	if(word != "ClassIDsAndCounters:"){
-		file.close();
         clear();
         errorLog << "loadDatasetFromFile(string filename) - Failed to find ClassIDsAndCounters!" << endl;
 		return false;
@@ -470,7 +485,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
     //Get the UseExternalRanges
 	file >> word;
 	if(word != "UseExternalRanges:"){
-		file.close();
         clear();
         errorLog << "loadDatasetFromFile(string filename) - Failed to find UseExternalRanges!" << endl;
 		return false;
@@ -489,7 +503,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 	//Get the main training data
 	file >> word;
 	if(word != "LabelledTimeSeriesTrainingData:"){
-        file.close();
         clear();
         errorLog << "loadDatasetFromFile(string filename) - Failed to find LabelledTimeSeriesTrainingData!" << endl;
 		return false;
@@ -505,7 +518,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 
 		file >> word;
 		if( word != "************TIME_SERIES************" ){
-			file.close();
             clear();
             errorLog << "loadDatasetFromFile(string filename) - Failed to find TimeSeries Header!" << endl;
             return false;
@@ -513,7 +525,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 
 		file >> word;
 		if( word != "ClassID:" ){
-			file.close();
             clear();
             errorLog << "loadDatasetFromFile(string filename) - Failed to find ClassID!" << endl;
             return false;
@@ -522,7 +533,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 
 		file >> word;
 		if( word != "TimeSeriesLength:" ){
-			file.close();
             clear();
             errorLog << "loadDatasetFromFile(string filename) - Failed to find TimeSeriesLength!" << endl;
             return false;
@@ -531,7 +541,6 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 
 		file >> word;
 		if( word != "TimeSeriesData:" ){
-			file.close();
             clear();
             errorLog << "loadDatasetFromFile(string filename) - Failed to find TimeSeriesData!" << endl;
             return false;
@@ -548,10 +557,10 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 		data[x].setTrainingSample(classLabel,trainingExample);
 	}
 
-	file.close();
 	return true;
 }
     
+#ifndef __GRT_ARDUINO_BUILD__
 bool TimeSeriesClassificationData::saveDatasetToCSVFile(const string &filename) const{
     
     std::fstream file;
@@ -561,6 +570,15 @@ bool TimeSeriesClassificationData::saveDatasetToCSVFile(const string &filename) 
         return false;
     }
     
+    bool res = saveDatasetToCSVStream(file);
+    
+    file.close();
+    
+    return res;
+}
+#endif
+    
+bool TimeSeriesClassificationData::saveDatasetToCSVStream(ostream &file) const{
     //Write the data to the CSV file
     for(UINT x=0; x<totalNumSamples; x++){
         for(UINT i=0; i<data[x].getLength(); i++){
@@ -576,11 +594,10 @@ bool TimeSeriesClassificationData::saveDatasetToCSVFile(const string &filename) 
         }
     }
     
-    file.close();
-    
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool TimeSeriesClassificationData::loadDatasetFromCSVFile(const string &filename){
     
     numDimensions = 0;
@@ -598,6 +615,32 @@ bool TimeSeriesClassificationData::loadDatasetFromCSVFile(const string &filename
         return false;
     }
     
+    return loadDatasetFromFileParser(parser);
+}
+#endif
+
+bool TimeSeriesClassificationData::loadDatasetFromCSVStream(istream &file){
+    
+    numDimensions = 0;
+    datasetName = "NOT_SET";
+    infoText = "";
+    
+    //Clear any previous data
+    clear();
+    
+    //Parse the CSV file
+    FileParser parser;
+    
+    if( !parser.parseCSVFile(file,true) ){
+        errorLog << "loadDatasetFromCSVFile(const string &filename) - Failed to parse CSV file!" << endl;
+        return false;
+    }
+    
+    return loadDatasetFromFileParser(parser);
+}
+    
+bool TimeSeriesClassificationData::loadDatasetFromFileParser(FileParser &parser){
+
     if( !parser.getConsistentColumnSize() ){
         errorLog << "loadDatasetFromCSVFile(const string &filename) - The CSV file does not have a consistent number of columns!" << endl;
         return false;

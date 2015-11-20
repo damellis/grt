@@ -132,6 +132,7 @@ const Regressifier& Regressifier::getBaseRegressifier() const{
 }
     
     
+#ifndef __GRT_ARDUINO_BUILD__
 bool Regressifier::saveBaseSettingsToFile(fstream &file) const{
     
     if( !file.is_open() ){
@@ -139,7 +140,12 @@ bool Regressifier::saveBaseSettingsToFile(fstream &file) const{
         return false;
     }
     
-    if( !MLBase::saveBaseSettingsToFile( file ) ) return false;
+    return saveBaseSettingsToStream(file);
+}
+#endif
+    
+bool Regressifier::saveBaseSettingsToStream(ostream &file) const{
+    if( !MLBase::saveBaseSettingsToStream( file ) ) return false;
     
     //Write the ranges to the file
     if( useScaling ){
@@ -157,7 +163,7 @@ bool Regressifier::saveBaseSettingsToFile(fstream &file) const{
     return true;
 }
 
-
+#ifndef __GRT_ARDUINO_BUILD__
 bool Regressifier::loadBaseSettingsFromFile(fstream &file){
     
     if( !file.is_open() ){
@@ -165,8 +171,14 @@ bool Regressifier::loadBaseSettingsFromFile(fstream &file){
         return false;
     }
     
+    return loadBaseSettingsFromStream(file);
+}
+#endif
+    
+bool Regressifier::loadBaseSettingsFromStream(istream &file){
+    
     //Try and load the base settings from the file
-    if( !MLBase::loadBaseSettingsFromFile( file ) ){
+    if( !MLBase::loadBaseSettingsFromStream( file ) ){
         return false;
     }
     

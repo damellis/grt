@@ -96,7 +96,7 @@ typedef signed int SINT;
 typedef unsigned long ULONG;
 #endif
     
-#ifdef ARDUINO
+#ifdef __GRT_ARDUINO_BUILD__
 #define grt_isnan(x) (x != x)
 #define grt_isinf(x) (!grt_isnan(x) && grt_isnan(x - x))
     

@@ -193,6 +193,7 @@ public:
      */
     bool scale(const vector< MinMax > &inputVectorRanges,const vector< MinMax > &targetVectorRanges,const double minTarget,const double maxTarget);
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Saves the data to a file.
      If the file format ends in '.csv' then the data will be saved as comma-seperated-values, otherwise it will be saved
@@ -249,6 +250,44 @@ public:
 	 @return true if the data was saved successfully, false otherwise
      */
     bool loadDatasetFromCSVFile(const string &filename,const UINT numInputDimensions,const UINT numTargetDimensions);
+#endif
+    
+    /**
+     Saves the labelled regression data to a custom file format.
+     
+     @param ostream &file: the stream the data will be saved to
+     @return true if the data was saved successfully, false otherwise
+     */
+    bool saveDatasetToStream(ostream &file) const;
+    
+    /**
+     Loads the labelled regression data from a custom file format.
+     
+     @param istream &file: the stream the data will be loaded from
+     @return true if the data was loaded successfully, false otherwise
+     */
+    bool loadDatasetFromStream(istream &file);
+    
+    /**
+     Saves the labelled regression data to a CSV file.
+     This will save the input vector as the first N columns and the target data as the following T columns.  Each row will represent a sample.
+     
+     @param ostream &file: the stream the data will be saved to
+     @return true if the data was saved successfully, false otherwise
+     */
+    bool saveDatasetToCSVStream(ostream &file) const;
+    
+    /**
+     Loads the labelled regression data from a CSV file.
+     Each row represents a sample, the first N columns should represent the input vector data with the remaining T columns representing the target sample.
+     The user must specify the length of the input vector (N) and the length of the target vector (T).
+     
+     @param istream &file: the stream the data will be loaded from
+     @param const UINT numInputDimensions: the length of an input vector
+     @param const UINT numTargetDimensions: the length of a target vector
+     @return true if the data was saved successfully, false otherwise
+     */
+    bool loadDatasetFromCSVStream(istream &file,const UINT numInputDimensions,const UINT numTargetDimensions);
     
     bool printStats() const;
     
@@ -357,6 +396,8 @@ public:
     vector< RegressionSample > getData() const{ return data; }
 
 private:
+    bool loadDatasetFromFileParser(FileParser &parser,const UINT numInputDimensions,const UINT numTargetDimensions);
+
     string datasetName;                                     ///< The name of the dataset
     string infoText;                                        ///< Some infoText about the dataset						
 	UINT numInputDimensions;                                ///< The number of input dimensions in the dataset

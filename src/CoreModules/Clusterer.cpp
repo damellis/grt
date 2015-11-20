@@ -150,7 +150,8 @@ bool Clusterer::clear(){
     
     return true;
 }
-    
+
+#ifndef __GRT_ARDUINO_BUILD__
 bool Clusterer::saveClustererSettingsToFile(fstream &file) const{
 	
     if( !file.is_open() ){
@@ -158,7 +159,13 @@ bool Clusterer::saveClustererSettingsToFile(fstream &file) const{
         return false;
     }
     
-    if( !MLBase::saveBaseSettingsToFile( file ) ) return false;
+    return saveClustererSettingsToStream(file);
+}
+#endif
+
+bool Clusterer::saveClustererSettingsToStream(ostream &file) const{
+    
+    if( !MLBase::saveBaseSettingsToStream( file ) ) return false;
     
     file << "NumClusters: " << numClusters << endl;
 	
@@ -173,6 +180,7 @@ bool Clusterer::saveClustererSettingsToFile(fstream &file) const{
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool Clusterer::loadClustererSettingsFromFile(fstream &file){
     
     if( !file.is_open() ){
@@ -180,8 +188,14 @@ bool Clusterer::loadClustererSettingsFromFile(fstream &file){
         return false;
     }
     
+    return loadClustererSettingsFromStream(file);
+}
+#endif
+    
+bool Clusterer::loadClustererSettingsFromStream(istream &file){
+
     //Try and load the base settings from the file
-    if( !MLBase::loadBaseSettingsFromFile( file ) ){
+    if( !MLBase::loadBaseSettingsFromStream( file ) ){
         return false;
     }
     
