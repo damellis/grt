@@ -249,7 +249,7 @@ public:
      @param ostream &file: the output stream the data will be saved to
      @return true if the data was saved successfully, false otherwise
      */
-    bool saveDatasetToStream(ostream &file);
+    bool saveDatasetToStream(ostream &file) const;
     
     /**
      Loads the unlabeled classification data from a custom file format.
