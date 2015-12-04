@@ -67,7 +67,7 @@ Regressifier::~Regressifier(void){
 bool Regressifier::copyBaseVariables(const Regressifier *regressifier){
     
     if( regressifier == NULL ){
-        errorLog << "copyBaseVariables(Regressifier *regressifier) - regressifier pointer is NULL!" << endl;
+        errorLog << F("copyBaseVariables(Regressifier *regressifier) - regressifier pointer is NULL!") << endl;
         return false;
     }
     
@@ -136,7 +136,7 @@ const Regressifier& Regressifier::getBaseRegressifier() const{
 bool Regressifier::saveBaseSettingsToFile(fstream &file) const{
     
     if( !file.is_open() ){
-        errorLog << "saveBaseSettingsToFile(fstream &file) - The file is not open!" << endl;
+        errorLog << F("saveBaseSettingsToFile(fstream &file) - The file is not open!") << endl;
         return false;
     }
     
@@ -167,7 +167,7 @@ bool Regressifier::saveBaseSettingsToStream(ostream &file) const{
 bool Regressifier::loadBaseSettingsFromFile(fstream &file){
     
     if( !file.is_open() ){
-        errorLog << "loadBaseSettingsFromFile(fstream &file) - The file is not open!" << endl;
+        errorLog << F("loadBaseSettingsFromFile(fstream &file) - The file is not open!") << endl;
         return false;
     }
     
@@ -188,7 +188,7 @@ bool Regressifier::loadBaseSettingsFromStream(istream &file){
         //Load the ranges
         file >> word;
         if( word != "InputVectorRanges:" ){
-            errorLog << "loadBaseSettingsFromFile(fstream &file) - Failed to read InputVectorRanges header!" << endl;
+            errorLog << F("loadBaseSettingsFromFile(fstream &file) - Failed to read InputVectorRanges header!") << endl;
             return false;
         }
         inputVectorRanges.resize(numInputDimensions);
@@ -199,7 +199,7 @@ bool Regressifier::loadBaseSettingsFromStream(istream &file){
         
         file >> word;
         if( word != "OutputVectorRanges:" ){
-            errorLog << "loadBaseSettingsFromFile(fstream &file) - Failed to read OutputVectorRanges header!" << endl;
+            errorLog << F("loadBaseSettingsFromFile(fstream &file) - Failed to read OutputVectorRanges header!") << endl;
             return false;
         }
         targetVectorRanges.resize(numOutputDimensions);

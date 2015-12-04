@@ -109,7 +109,7 @@ bool KNN::train_(ClassificationData &trainingData){
     clear();
     
     if( trainingData.getNumSamples() == 0 ){
-        errorLog << "train_(ClassificationData &trainingData) - Training data has zero samples!" << endl;
+        errorLog << F("train_(ClassificationData &trainingData) - Training data has zero samples!") << endl;
         return false;
     }
     
@@ -149,7 +149,7 @@ bool KNN::train_(ClassificationData &trainingData){
         ClassificationData testSet = trainingSet.partition(80,true);
 
         if( !train_(trainingSet, k) ){
-            errorLog << "Failed to train model for a k value of " << k << endl;
+            errorLog << F("Failed to train model for a k value of ") << k << endl;
         }else{
 
             //Compute the classification error
@@ -159,7 +159,7 @@ bool KNN::train_(ClassificationData &trainingData){
                 VectorDouble sample = testSet[i].getSample();
 
                 if( !predict( sample , k) ){
-                    errorLog << "Failed to predict label for test sample with a k value of " << k << endl;
+                    errorLog << F("Failed to predict label for test sample with a k value of ") << k << endl;
                     return false;
                 }
 
@@ -316,12 +316,12 @@ bool KNN::train_(const ClassificationData &trainingData,const UINT K){
 bool KNN::predict_(VectorDouble &inputVector){
 
     if( !trained ){
-        errorLog << "predict_(VectorDouble &inputVector) - KNN model has not been trained" << endl;
+        errorLog << F("predict_(VectorDouble &inputVector) - KNN model has not been trained") << endl;
         return false;
     }
 
     if( inputVector.size() != numInputDimensions ){
-        errorLog << "predict_(VectorDouble &inputVector) - the size of the input vector " << inputVector.size() << " does not match the number of features " << numInputDimensions <<  endl;
+        errorLog << F("predict_(VectorDouble &inputVector) - the size of the input vector ") << inputVector.size() << F(" does not match the number of features ") << numInputDimensions <<  endl;
         return false;
     }
     
@@ -339,17 +339,17 @@ bool KNN::predict_(VectorDouble &inputVector){
 bool KNN::predict(const VectorDouble &inputVector,const UINT K){
 
     if( !trained ){
-        errorLog << "predict(VectorDouble inputVector,UINT K) - KNN model has not been trained" << endl;
+        errorLog << F("predict(VectorDouble inputVector,UINT K) - KNN model has not been trained") << endl;
         return false;
     }
 
     if( inputVector.size() != numInputDimensions ){
-        errorLog << "predict(VectorDouble inputVector) - the size of the input vector " << inputVector.size() << " does not match the number of features " << numInputDimensions <<  endl;
+        errorLog << F("predict(VectorDouble inputVector) - the size of the input vector ") << inputVector.size() << F(" does not match the number of features ") << numInputDimensions <<  endl;
         return false;
     }
 
     if( K > trainingData.getNumSamples() ){
-        errorLog << "predict(VectorDouble inputVector,UINT K) - K Is Greater Than The Number Of Training Samples" << endl;
+        errorLog << F("predict(VectorDouble inputVector,UINT K) - K Is Greater Than The Number Of Training Samples") << endl;
         return false;
     }
 
@@ -373,7 +373,7 @@ bool KNN::predict(const VectorDouble &inputVector,const UINT K){
                 dist = computeManhattanDistance(inputVector, trainingSample);
                 break;
             default:
-                errorLog << "predict(vector< double > inputVector) - unkown distance measure!" << endl;
+                errorLog << F("predict(vector< double > inputVector) - unkown distance measure!") << endl;
                 return false;
                 break;
         }
@@ -409,7 +409,7 @@ bool KNN::predict(const VectorDouble &inputVector,const UINT K){
     for(UINT k=0; k<neighbours.size(); k++){
         UINT classLabel = neighbours[k].index;
         if( classLabel == 0 ){
-            errorLog << "predict(VectorDouble inputVector) - Class label of training example can not be zero!" << endl;
+            errorLog << F("predict(VectorDouble inputVector) - Class label of training example can not be zero!") << endl;
             return false;
         }
 
@@ -480,7 +480,7 @@ bool KNN::saveModelToFile(fstream &file) const{
     
     if(!file.is_open())
     {
-        errorLog << "saveModelToFile(fstream &file) - Could not open file to save model!" << endl;
+        errorLog << F("saveModelToFile(fstream &file) - Could not open file to save model!") << endl;
         return false;
     }
     
@@ -495,7 +495,7 @@ bool KNN::saveModelToStream(ostream &file) const{
     
     //Write the classifier settings to the file
     if( !Classifier::saveBaseSettingsToStream(file) ){
-        errorLog <<"saveModelToFile(fstream &file) - Failed to save classifier base settings to file!" << endl;
+        errorLog <<F("saveModelToFile(fstream &file) - Failed to save classifier base settings to file!") << endl;
 		return false;
     }
     
@@ -540,7 +540,7 @@ bool KNN::loadModelFromFile(fstream &file){
     
     if(!file.is_open())
     {
-        errorLog << "loadModelFromFile(fstream &file) - Could not open file to load model!" << endl;
+        errorLog << F("loadModelFromFile(fstream &file) - Could not open file to load model!") << endl;
         return false;
     }
     
@@ -560,47 +560,47 @@ bool KNN::loadModelFromStream(istream &file){
     
     //Find the file type header
     if(word != "GRT_KNN_MODEL_FILE_V2.0"){
-        errorLog << "loadModelFromFile(fstream &file) - Could not find Model File Header!" << endl;
+        errorLog << F("loadModelFromFile(fstream &file) - Could not find Model File Header!") << endl;
         return false;
     }
     
     //Load the base settings from the file
     if( !Classifier::loadBaseSettingsFromStream(file) ){
-        errorLog << "loadModelFromFile(string filename) - Failed to load base settings from file!" << endl;
+        errorLog << F("loadModelFromFile(string filename) - Failed to load base settings from file!") << endl;
         return false;
     }
     
     file >> word;
     if(word != "K:"){
-        errorLog << "loadModelFromFile(fstream &file) - Could not find K!" << endl;
+        errorLog << F("loadModelFromFile(fstream &file) - Could not find K!") << endl;
         return false;
     }
     file >> K;
     
     file >> word;
     if(word != "DistanceMethod:"){
-        errorLog << "loadModelFromFile(fstream &file) - Could not find DistanceMethod!" << endl;
+        errorLog << F("loadModelFromFile(fstream &file) - Could not find DistanceMethod!") << endl;
         return false;
     }
     file >> distanceMethod;
     
     file >> word;
     if(word != "SearchForBestKValue:"){
-        errorLog << "loadModelFromFile(fstream &file) - Could not find SearchForBestKValue!" << endl;
+        errorLog << F("loadModelFromFile(fstream &file) - Could not find SearchForBestKValue!") << endl;
         return false;
     }
     file >> searchForBestKValue;
     
     file >> word;
     if(word != "MinKSearchValue:"){
-        errorLog << "loadModelFromFile(fstream &file) - Could not find MinKSearchValue!" << endl;
+        errorLog << F("loadModelFromFile(fstream &file) - Could not find MinKSearchValue!") << endl;
         return false;
     }
     file >> minKSearchValue;
     
     file >> word;
     if(word != "MaxKSearchValue:"){
-        errorLog << "loadModelFromFile(fstream &file) - Could not find MaxKSearchValue!" << endl;
+        errorLog << F("loadModelFromFile(fstream &file) - Could not find MaxKSearchValue!") << endl;
         return false;
     }
     file >> maxKSearchValue;
@@ -614,7 +614,7 @@ bool KNN::loadModelFromStream(istream &file){
         if( useNullRejection ){
             file >> word;
             if(word != "TrainingMu:"){
-                errorLog << "loadModelFromFile(fstream &file) - Could not find TrainingMu!" << endl;
+                errorLog << F("loadModelFromFile(fstream &file) - Could not find TrainingMu!") << endl;
                 return false;
             }
             
@@ -625,7 +625,7 @@ bool KNN::loadModelFromStream(istream &file){
             
             file >> word;
             if(word != "TrainingSigma:"){
-                errorLog << "loadModelFromFile(fstream &file) - Could not find TrainingSigma!" << endl;
+                errorLog << F("loadModelFromFile(fstream &file) - Could not find TrainingSigma!") << endl;
                 return false;
             }
         
@@ -637,7 +637,7 @@ bool KNN::loadModelFromStream(istream &file){
         
         file >> word;
         if(word != "NumTrainingSamples:"){
-            errorLog << "loadModelFromFile(fstream &file) - Could not find NumTrainingSamples!" << endl;
+            errorLog << F("loadModelFromFile(fstream &file) - Could not find NumTrainingSamples!") << endl;
             return false;
         }
         unsigned int numTrainingSamples = 0;
@@ -645,7 +645,7 @@ bool KNN::loadModelFromStream(istream &file){
         
         file >> word;
         if(word != "TrainingData:"){
-            errorLog << "loadModelFromFile(fstream &file) - Could not find TrainingData!" << endl;
+            errorLog << F("loadModelFromFile(fstream &file) - Could not find TrainingData!") << endl;
             return false;
         }
         
@@ -777,70 +777,70 @@ bool KNN::loadLegacyModelFromFile( istream &file ){
     //Find the file type header
     file >> word;
     if(word != "NumFeatures:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find NumFeatures!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find NumFeatures!") << endl;
         return false;
     }
     file >> numInputDimensions;
     
     file >> word;
     if(word != "NumClasses:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find NumClasses!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find NumClasses!") << endl;
         return false;
     }
     file >> numClasses;
     
     file >> word;
     if(word != "K:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find K!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find K!") << endl;
         return false;
     }
     file >> K;
     
     file >> word;
     if(word != "DistanceMethod:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find DistanceMethod!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find DistanceMethod!") << endl;
         return false;
     }
     file >> distanceMethod;
     
     file >> word;
     if(word != "SearchForBestKValue:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find SearchForBestKValue!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find SearchForBestKValue!") << endl;
         return false;
     }
     file >> searchForBestKValue;
     
     file >> word;
     if(word != "MinKSearchValue:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find MinKSearchValue!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find MinKSearchValue!") << endl;
         return false;
     }
     file >> minKSearchValue;
     
     file >> word;
     if(word != "MaxKSearchValue:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find MaxKSearchValue!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find MaxKSearchValue!") << endl;
         return false;
     }
     file >> maxKSearchValue;
     
     file >> word;
     if(word != "UseScaling:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find UseScaling!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find UseScaling!") << endl;
         return false;
     }
     file >> useScaling;
     
     file >> word;
     if(word != "UseNullRejection:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find UseNullRejection!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find UseNullRejection!") << endl;
         return false;
     }
     file >> useNullRejection;
     
     file >> word;
     if(word != "NullRejectionCoeff:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find NullRejectionCoeff!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find NullRejectionCoeff!") << endl;
         return false;
     }
     file >> nullRejectionCoeff;
@@ -852,7 +852,7 @@ bool KNN::loadLegacyModelFromFile( istream &file ){
         
         file >> word;
         if(word != "Ranges:"){
-            errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find Ranges!" << endl;
+            errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find Ranges!") << endl;
             cout << "Word: " << word << endl;
             return false;
         }
@@ -868,7 +868,7 @@ bool KNN::loadLegacyModelFromFile( istream &file ){
     
     file >> word;
     if(word != "TrainingMu:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find TrainingMu!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find TrainingMu!") << endl;
         return false;
     }
     
@@ -879,7 +879,7 @@ bool KNN::loadLegacyModelFromFile( istream &file ){
     
     file >> word;
     if(word != "TrainingSigma:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find TrainingSigma!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find TrainingSigma!") << endl;
         return false;
     }
     
@@ -890,7 +890,7 @@ bool KNN::loadLegacyModelFromFile( istream &file ){
     
     file >> word;
     if(word != "NumTrainingSamples:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find NumTrainingSamples!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find NumTrainingSamples!") << endl;
         return false;
     }
     unsigned int numTrainingSamples = 0;
@@ -898,7 +898,7 @@ bool KNN::loadLegacyModelFromFile( istream &file ){
     
     file >> word;
     if(word != "TrainingData:"){
-        errorLog << "loadLegacyModelFromFile(fstream &file) - Could not find TrainingData!" << endl;
+        errorLog << F("loadLegacyModelFromFile(fstream &file) - Could not find TrainingData!") << endl;
         return false;
     }
     

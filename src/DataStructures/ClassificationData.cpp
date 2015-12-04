@@ -90,7 +90,7 @@ bool ClassificationData::setNumDimensions(const UINT numDimensions){
         return true;
     }
 
-    errorLog << "setNumDimensions(const UINT numDimensions) - The number of dimensions of the dataset must be greater than zero!" << endl;
+    errorLog << F("setNumDimensions(const UINT numDimensions) - The number of dimensions of the dataset must be greater than zero!") << endl;
     return false;
 }
 
@@ -102,7 +102,7 @@ bool ClassificationData::setDatasetName(const string datasetName){
         return true;
     }
 
-    errorLog << "setDatasetName(const string datasetName) - The dataset name cannot contain any spaces!" << endl;
+    errorLog << F("setDatasetName(const string datasetName) - The dataset name cannot contain any spaces!") << endl;
     return false;
 }
 
@@ -120,7 +120,7 @@ bool ClassificationData::setClassNameForCorrespondingClassLabel(const string cla
         }
     }
 
-	errorLog << "setClassNameForCorrespondingClassLabel(const string className,const UINT classLabel) - Failed to find class with label: " << classLabel << endl;
+	errorLog << F("setClassNameForCorrespondingClassLabel(const string className,const UINT classLabel) - Failed to find class with label: ") << classLabel << endl;
     return false;
 }
     
@@ -132,13 +132,13 @@ bool ClassificationData::setAllowNullGestureClass(const bool allowNullGestureCla
 bool ClassificationData::addSample(const UINT classLabel,const VectorDouble &sample){
     
 	if( sample.size() != numDimensions ){
-        errorLog << "addSample(const UINT classLabel, VectorDouble &sample) - the size of the new sample (" << sample.size() << ") does not match the number of dimensions of the dataset (" << numDimensions << ")" << endl;
+        errorLog << F("addSample(const UINT classLabel, VectorDouble &sample) - the size of the new sample (") << sample.size() << F(") does not match the number of dimensions of the dataset (") << numDimensions << ")" << endl;
         return false;
     }
 
     //The class label must be greater than zero (as zero is used for the null rejection class label
     if( classLabel == GRT_DEFAULT_NULL_CLASS_LABEL && !allowNullGestureClass ){
-        errorLog << "addSample(const UINT classLabel, VectorDouble &sample) - the class label can not be 0!" << endl;
+        errorLog << F("addSample(const UINT classLabel, VectorDouble &sample) - the class label can not be 0!") << endl;
         return false;
     }
 
@@ -177,12 +177,12 @@ bool ClassificationData::addSample(const UINT classLabel,const VectorDouble &sam
 bool ClassificationData::removeSample( const UINT index ){
     
     if( totalNumSamples == 0 ){
-        warningLog << "removeSample( const UINT index ) - Failed to remove sample, the training dataset is empty!" << endl;
+        warningLog << F("removeSample( const UINT index ) - Failed to remove sample, the training dataset is empty!") << endl;
         return false;
     }
     
     if( index >= totalNumSamples ){
-        warningLog << "removeSample( const UINT index ) - Failed to remove sample, the index is out of bounds! Number of training samples: " << totalNumSamples << " index: " << index << endl;
+        warningLog << F("removeSample( const UINT index ) - Failed to remove sample, the index is out of bounds! Number of training samples: ") << totalNumSamples << " index: " << index << endl;
         return false;
     }
     
@@ -212,7 +212,7 @@ bool ClassificationData::removeSample( const UINT index ){
 bool ClassificationData::removeLastSample(){
     
     if( totalNumSamples == 0 ){
-        warningLog << "removeLastSample() - Failed to remove sample, the training dataset is empty!" << endl;
+        warningLog << F("removeLastSample() - Failed to remove sample, the training dataset is empty!") << endl;
         return false;
     }
 
@@ -237,7 +237,7 @@ bool ClassificationData::addClass(const UINT classLabel,const std::string classN
     //Check to make sure the class label does not exist
     for(size_t i=0; i<classTracker.size(); i++){
         if( classTracker[i].classLabel == classLabel ){
-            warningLog << "addClass(const UINT classLabel,const std::string className) - Failed to add class, it already exists! Class label: " << classLabel << endl;
+            warningLog << F("addClass(const UINT classLabel,const std::string className) - Failed to add class, it already exists! Class label: ") << classLabel << endl;
             return false;
         }
     }
@@ -452,7 +452,7 @@ bool ClassificationData::loadDatasetFromFile(const string &filename){
 	clear();
 
 	if( !file.is_open() ){
-        errorLog << "loadDatasetFromFile(const string &filename) - could not open file!" << endl;
+        errorLog << F("loadDatasetFromFile(const string &filename) - could not open file!") << endl;
 		return false;
 	}
 
@@ -470,14 +470,14 @@ bool ClassificationData::loadDatasetFromStream(istream &file){
 	//Check to make sure this is a file with the Training File Format
 	file >> word;
 	if(word != "GRT_LABELLED_CLASSIFICATION_DATA_FILE_V1.0"){
-        errorLog << "loadDatasetFromFile(const string &filename) - could not find file header!" << endl;
+        errorLog << F("loadDatasetFromFile(const string &filename) - could not find file header!") << endl;
 		return false;
 	}
 
     //Get the name of the dataset
 	file >> word;
 	if(word != "DatasetName:"){
-        errorLog << "loadDatasetFromFile(const string &filename) - failed to find DatasetName header!" << endl;
+        errorLog << F("loadDatasetFromFile(const string &filename) - failed to find DatasetName header!") << endl;
         errorLog << word << endl;
 		return false;
 	}
@@ -485,7 +485,7 @@ bool ClassificationData::loadDatasetFromStream(istream &file){
 
     file >> word;
 	if(word != "InfoText:"){
-        errorLog << "loadDatasetFromFile(const string &filename) - failed to find InfoText header!" << endl;
+        errorLog << F("loadDatasetFromFile(const string &filename) - failed to find InfoText header!") << endl;
 		return false;
 	}
 
@@ -499,7 +499,7 @@ bool ClassificationData::loadDatasetFromStream(istream &file){
 
 	//Get the number of dimensions in the training data
 	if( word != "NumDimensions:" ){
-        errorLog << "loadDatasetFromFile(const string &filename) - failed to find NumDimensions header!" << endl;
+        errorLog << F("loadDatasetFromFile(const string &filename) - failed to find NumDimensions header!") << endl;
 		return false;
 	}
 	file >> numDimensions;
@@ -507,7 +507,7 @@ bool ClassificationData::loadDatasetFromStream(istream &file){
 	//Get the total number of training examples in the training data
 	file >> word;
 	if( word != "TotalNumTrainingExamples:" && word != "TotalNumExamples:" ){
-        errorLog << "loadDatasetFromFile(const string &filename) - failed to find TotalNumTrainingExamples header!" << endl;
+        errorLog << F("loadDatasetFromFile(const string &filename) - failed to find TotalNumTrainingExamples header!") << endl;
 		return false;
 	}
 	file >> totalNumSamples;
@@ -515,7 +515,7 @@ bool ClassificationData::loadDatasetFromStream(istream &file){
 	//Get the total number of classes in the training data
 	file >> word;
 	if(word != "NumberOfClasses:"){
-        errorLog << "loadDatasetFromFile(string filename) - failed to find NumberOfClasses header!" << endl;
+        errorLog << F("loadDatasetFromFile(string filename) - failed to find NumberOfClasses header!") << endl;
 		return false;
 	}
 	file >> numClasses;
@@ -526,7 +526,7 @@ bool ClassificationData::loadDatasetFromStream(istream &file){
 	//Get the total number of classes in the training data
 	file >> word;
 	if(word != "ClassIDsAndCounters:"){
-        errorLog << "loadDatasetFromFile(const string &filename) - failed to find ClassIDsAndCounters header!" << endl;
+        errorLog << F("loadDatasetFromFile(const string &filename) - failed to find ClassIDsAndCounters header!") << endl;
 		return false;
 	}
 
@@ -539,7 +539,7 @@ bool ClassificationData::loadDatasetFromStream(istream &file){
     //Check if the dataset should be scaled using external ranges
 	file >> word;
 	if(word != "UseExternalRanges:"){
-        errorLog << "loadDatasetFromFile(const string &filename) - failed to find UseExternalRanges header!" << endl;
+        errorLog << F("loadDatasetFromFile(const string &filename) - failed to find UseExternalRanges header!") << endl;
 		return false;
 	}
     file >> useExternalRanges;
@@ -556,7 +556,7 @@ bool ClassificationData::loadDatasetFromStream(istream &file){
 	//Get the main training data
 	file >> word;
 	if( word != "LabelledTrainingData:" && word != "Data:"){
-        errorLog << "loadDatasetFromFile(const string &filename) - failed to find LabelledTrainingData header!" << endl;
+        errorLog << F("loadDatasetFromFile(const string &filename) - failed to find LabelledTrainingData header!") << endl;
 		return false;
 	}
 
@@ -624,7 +624,7 @@ bool ClassificationData::loadDatasetFromCSVFile(const string &filename,const UIN
     FileParser parser;
     
     if( !parser.parseCSVFile(filename,true) ){
-        errorLog << "loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndex) - Failed to parse CSV file!" << endl;
+        errorLog << F("loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndex) - Failed to parse CSV file!") << endl;
         return false;
     }
     
@@ -644,7 +644,7 @@ bool ClassificationData::loadDatasetFromCSVStream(istream &file,const UINT class
     FileParser parser;
     
     if( !parser.parseCSVFile(file,true) ){
-        errorLog << "loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndex) - Failed to parse CSV file!" << endl;
+        errorLog << F("loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndex) - Failed to parse CSV file!") << endl;
         return false;
     }
     
@@ -653,12 +653,12 @@ bool ClassificationData::loadDatasetFromCSVStream(istream &file,const UINT class
 
 bool ClassificationData::loadDatasetFromFileParser(FileParser &parser,const UINT classLabelColumnIndex){
     if( !parser.getConsistentColumnSize() ){
-        errorLog << "loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndexe) - The CSV file does not have a consistent number of columns!" << endl;
+        errorLog << F("loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndexe) - The CSV file does not have a consistent number of columns!") << endl;
         return false;
     }
     
     if( parser.getColumnSize() <= 1 ){
-        errorLog << "loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndex) - The CSV file does not have enough columns! It should contain at least two columns!" << endl;
+        errorLog << F("loadDatasetFromCSVFile(const string &filename,const UINT classLabelColumnIndex) - The CSV file does not have enough columns! It should contain at least two columns!") << endl;
         return false;
     }
     
@@ -836,7 +836,7 @@ ClassificationData ClassificationData::partition(const UINT trainingSizePercenta
 bool ClassificationData::merge(const ClassificationData &labelledData){
 
     if( labelledData.getNumDimensions() != numDimensions ){
-        errorLog << "merge(const ClassificationData &labelledData) - The number of dimensions in the labelledData (" << labelledData.getNumDimensions() << ") does not match the number of dimensions of this dataset (" << numDimensions << ")" << endl;
+        errorLog << F("merge(const ClassificationData &labelledData) - The number of dimensions in the labelledData (") << labelledData.getNumDimensions() << F(") does not match the number of dimensions of this dataset (") << numDimensions << ")" << endl;
         return false;
     }
 
@@ -871,13 +871,13 @@ bool ClassificationData::spiltDataIntoKFolds(const UINT K,const bool useStratifi
 
     //K can not be zero
     if( K > totalNumSamples ){
-        errorLog << "spiltDataIntoKFolds(const UINT K,const bool useStratifiedSampling) - K can not be zero!" << endl;
+        errorLog << F("spiltDataIntoKFolds(const UINT K,const bool useStratifiedSampling) - K can not be zero!") << endl;
         return false;
     }
 
     //K can not be larger than the number of examples
     if( K > totalNumSamples ){
-        errorLog << "spiltDataIntoKFolds(const UINT K,const bool useStratifiedSampling) - K can not be larger than the total number of samples in the dataset!" << endl;
+        errorLog << F("spiltDataIntoKFolds(const UINT K,const bool useStratifiedSampling) - K can not be larger than the total number of samples in the dataset!") << endl;
         return false;
     }
 
@@ -885,7 +885,7 @@ bool ClassificationData::spiltDataIntoKFolds(const UINT K,const bool useStratifi
     if( useStratifiedSampling ){
         for(UINT c=0; c<classTracker.size(); c++){
             if( K > classTracker[c].counter ){
-                errorLog << "spiltDataIntoKFolds(const UINT K,const bool useStratifiedSampling) - K can not be larger than the number of samples in any given class!" << endl;
+                errorLog << F("spiltDataIntoKFolds(const UINT K,const bool useStratifiedSampling) - K can not be larger than the number of samples in any given class!") << endl;
                 return false;
             }
         }
@@ -976,7 +976,7 @@ ClassificationData ClassificationData::getTrainingFoldData(const UINT foldIndex)
     trainingData.setAllowNullGestureClass( allowNullGestureClass );
 
     if( !crossValidationSetup ){
-        errorLog << "getTrainingFoldData(const UINT foldIndex) - Cross Validation has not been setup! You need to call the spiltDataIntoKFolds(UINT K,bool useStratifiedSampling) function first before calling this function!" << endl;
+        errorLog << F("getTrainingFoldData(const UINT foldIndex) - Cross Validation has not been setup! You need to call the spiltDataIntoKFolds(UINT K,bool useStratifiedSampling) function first before calling this function!") << endl;
        return trainingData;
     }
 
@@ -1200,7 +1200,7 @@ UINT ClassificationData::getClassLabelIndexValue(UINT classLabel) const{
             return k;
         }
     }
-    warningLog << "getClassLabelIndexValue(UINT classLabel) - Failed to find class label: " << classLabel << " in class tracker!" << endl;
+    warningLog << F("getClassLabelIndexValue(UINT classLabel) - Failed to find class label: ") << classLabel << F(" in class tracker!") << endl;
     return 0;
 }
 

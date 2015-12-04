@@ -91,7 +91,7 @@ Classifier::~Classifier(void){
 bool Classifier::copyBaseVariables(const Classifier *classifier){
     
     if( classifier == NULL ){
-        errorLog << "copyBaseVariables(const Classifier *classifier) - Classifier is NULL!" << endl;
+        errorLog << F("copyBaseVariables(const Classifier *classifier) - Classifier is NULL!") << endl;
         return false;
     }
     
@@ -255,7 +255,7 @@ const Classifier& Classifier::getBaseClassifier() const{
 bool Classifier::saveBaseSettingsToFile(fstream &file) const{
     
     if( !file.is_open() ){
-        errorLog << "saveBaseSettingsToFile(fstream &file) - The file is not open!" << endl;
+        errorLog << F("saveBaseSettingsToFile(fstream &file) - The file is not open!") << endl;
         return false;
     }
     
@@ -330,7 +330,7 @@ bool Classifier::loadBaseSettingsFromStream(istream &file){
     //Load if the number of clusters
     file >> word;
     if( word != "UseNullRejection:" ){
-        errorLog << "loadBaseSettingsFromFile(fstream &file) - Failed to read UseNullRejection header!" << endl;
+        errorLog << F("loadBaseSettingsFromFile(fstream &file) - Failed to read UseNullRejection header!") << endl;
         clear();
         return false;
     }
@@ -339,7 +339,7 @@ bool Classifier::loadBaseSettingsFromStream(istream &file){
     //Load if the classifier mode
     file >> word;
     if( word != "ClassifierMode:" ){
-        errorLog << "loadBaseSettingsFromFile(fstream &file) - Failed to read ClassifierMode header!" << endl;
+        errorLog << F("loadBaseSettingsFromFile(fstream &file) - Failed to read ClassifierMode header!") << endl;
         clear();
         return false;
     }
@@ -348,7 +348,7 @@ bool Classifier::loadBaseSettingsFromStream(istream &file){
     //Load if the null rejection coeff
     file >> word;
     if( word != "NullRejectionCoeff:" ){
-        errorLog << "loadBaseSettingsFromFile(fstream &file) - Failed to read NullRejectionCoeff header!" << endl;
+        errorLog << F("loadBaseSettingsFromFile(fstream &file) - Failed to read NullRejectionCoeff header!") << endl;
         clear();
         return false;
     }
@@ -360,7 +360,7 @@ bool Classifier::loadBaseSettingsFromStream(istream &file){
         //Load the number of classes
         file >> word;
         if( word != "NumClasses:" ){
-            errorLog << "loadBaseSettingsFromFile(fstream &file) - Failed to read NumClasses header!" << endl;
+            errorLog << F("loadBaseSettingsFromFile(fstream &file) - Failed to read NumClasses header!") << endl;
             clear();
             return false;
         }
@@ -369,7 +369,7 @@ bool Classifier::loadBaseSettingsFromStream(istream &file){
         //Load the null rejection thresholds
         file >> word;
         if( word != "NullRejectionThresholds:" ){
-            errorLog << "loadBaseSettingsFromFile(fstream &file) - Failed to read NullRejectionThresholds header!" << endl;
+            errorLog << F("loadBaseSettingsFromFile(fstream &file) - Failed to read NullRejectionThresholds header!") << endl;
             clear();
             return false;
         }
@@ -381,7 +381,7 @@ bool Classifier::loadBaseSettingsFromStream(istream &file){
         //Load the class labels
         file >> word;
         if( word != "ClassLabels:" ){
-            errorLog << "loadBaseSettingsFromFile(fstream &file) - Failed to read ClassLabels header!" << endl;
+            errorLog << F("loadBaseSettingsFromFile(fstream &file) - Failed to read ClassLabels header!") << endl;
             clear();
             return false;
         }
@@ -394,7 +394,7 @@ bool Classifier::loadBaseSettingsFromStream(istream &file){
             //Load if the Ranges
             file >> word;
             if( word != "Ranges:" ){
-                errorLog << "loadBaseSettingsFromFile(fstream &file) - Failed to read Ranges header!" << endl;
+                errorLog << F("loadBaseSettingsFromFile(fstream &file) - Failed to read Ranges header!") << endl;
                 clear();
                 return false;
             }
