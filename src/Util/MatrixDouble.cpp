@@ -528,6 +528,7 @@ double MatrixDouble::getTrace() const{
     return t;
 }
   
+#ifndef __GRT_ARDUINO_BUILD__
 bool MatrixDouble::save(const string &filename) const{
     
     std::fstream file;
@@ -536,6 +537,16 @@ bool MatrixDouble::save(const string &filename) const{
     if( !file.is_open() ){
         return false;
     }
+	
+	bool res = save(file);
+	
+    file.close();
+	
+    return res;
+}
+#endif
+
+bool MatrixDouble::save(ostream &file) const{
     
     for(UINT i=0; i<rows; i++){
         for(UINT j=0; j<cols; j++){
@@ -543,10 +554,10 @@ bool MatrixDouble::save(const string &filename) const{
         }
     }
     
-    file.close();
     return true;
 }
-    
+
+#ifndef __GRT_ARDUINO_BUILD__
 bool MatrixDouble::load(const string &filename,const char seperator){
     
     //Clear any previous data
@@ -654,5 +665,6 @@ bool MatrixDouble::saveToCSVFile(const string &filename) const{
 bool MatrixDouble::loadFromCSVFile(const string &filename,const char seperator){
     return load( filename, seperator );
 }
-    
+#endif
+
 }; //End of namespace GRT

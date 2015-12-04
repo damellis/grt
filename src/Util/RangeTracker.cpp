@@ -77,6 +77,7 @@ bool RangeTracker::update(vector<double> sample){
 	return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool RangeTracker::saveRangeDataToFile(string filename){
 
 	std::fstream file; 
@@ -85,7 +86,16 @@ bool RangeTracker::saveRangeDataToFile(string filename){
 	if( !file.is_open() ){
 		return false;
 	}
+	
+	bool res = saveRangeDataToStream(file);
+	
+	file.close();
+	
+	return res;
+}
+#endif
 
+bool RangeTracker::saveRangeDataToStream(ostream &file){
 	file << "GRT_RANGE_TRACKER_DATA_FILE_V1.0\n";
 	file << "NumDimensions: " << numDimensions << endl;
 	file << "TotalNumSamplesViewed: " << totalNumSamplesViewed << endl;
@@ -95,34 +105,42 @@ bool RangeTracker::saveRangeDataToFile(string filename){
         file << ranges[i].minValue << "\t" << ranges[i].maxValue << endl;
     }
     
-   	file.close();
 	return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool RangeTracker::loadRangeDataFromFile(string filename){
 
 	std::fstream file; 
 	file.open(filename.c_str(), std::ios::in);
-	clear();
 
 	if( !file.is_open() ){
         cout << "FILE NOT FOUND\n";
 		return false;
 	}
+	
+	bool res = loadRangeDataFromStream(file);
+
+	file.close();
+	
+	return res;
+}
+#endif
+	
+bool RangeTracker::loadRangeDataFromStream(istream &file){
+	clear();
 
 	string word;
 
 	//Check to make sure this is a file with the correct file format
 	file >> word;
 	if(word != "GRT_RANGE_TRACKER_DATA_FILE_V1.0"){
-		file.close();
 		return false;
 	}
     
    	//Get the number of dimensions in the data
 	file >> word;
 	if(word != "NumDimensions:"){
-		file.close();
 		return false;
 	}
 	file >> numDimensions;
@@ -130,7 +148,6 @@ bool RangeTracker::loadRangeDataFromFile(string filename){
 	//Get the total number of training examples in the training data
 	file >> word;
 	if(word != "TotalNumSamplesViewed:"){
-		file.close();
 		return false;
 	}
 	file >> totalNumSamplesViewed;
@@ -139,7 +156,6 @@ bool RangeTracker::loadRangeDataFromFile(string filename){
     //Load the ranges
 	file >> word;
 	if(word != "Ranges:"){
-		file.close();
 		return false;
 	}
 
@@ -149,10 +165,9 @@ bool RangeTracker::loadRangeDataFromFile(string filename){
         file >> ranges[i].maxValue;
     }
     
-	file.close();
 	return true;
 }
-    
+
 vector<MinMax> RangeTracker::getRanges(){
     
     return ranges;

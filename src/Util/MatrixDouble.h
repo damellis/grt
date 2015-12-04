@@ -106,6 +106,7 @@ public:
      */
     //virtual bool resize(const unsigned int rows,const unsigned int cols);
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Saves the matrix to a CSV file.  This replaces the deprecated saveToCSVFile function.
      
@@ -141,7 +142,27 @@ public:
      @return returns true or false, indicating if the data was loaded successful
      */
     bool loadFromCSVFile(const string &filename,const char seperator = ',');
+#endif
     
+    /**
+     Saves the matrix to a CSV file.  This replaces the deprecated saveToCSVFile function.
+     
+     @param ostream &file: the output stream to which to save the CSV file
+     @return returns true or false, indicating if the data was saved successful
+     */
+    bool save(ostream &file) const;
+    
+//    /**
+//     Loads a matrix from a CSV file. This assumes that the data has been saved as rows and columns in the CSV file
+//     and that there are an equal number of columns per row.
+//     
+//     This replaces the deprecated loadFromCSVFile function.
+//     
+//     @param istream &file: the input stream from which to load the CSV file
+//     @return returns true or false, indicating if the data was loaded successful
+//     */
+//    bool load(istream &file,const char seperator = ',');
+	
     /**
      Prints the MatrixDouble contents to std::cout
      

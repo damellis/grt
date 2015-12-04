@@ -121,6 +121,7 @@ public:
     bool trackingData(){ return trackData; }
     
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      Save the range data to a file.
      
@@ -134,7 +135,22 @@ public:
 	 @return true if the range data was loaded from a file, false otherwise
      */
     bool loadRangeDataFromFile(string filename);
+#endif
+	
+    /**
+     Save the range data to an output stream.
+     
+	 @return true if the range data was saved to a file, false otherwise
+     */
+    bool saveRangeDataToStream(ostream &file);
     
+    /**
+     Load the range data from an input stream.
+     
+	 @return true if the range data was loaded from a file, false otherwise
+     */
+    bool loadRangeDataFromStream(istream &file);
+
 	/**
      Gets the number of dimensions of the data.
      
