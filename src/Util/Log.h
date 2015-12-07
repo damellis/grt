@@ -206,7 +206,7 @@ public:
     }
 	
 #ifdef __GRT_ARDUINO_BUILD__
-    const Log& operator<< (const __FlashStringHelper* val ){
+    const Log& operator<< (const __FlashStringHelper* val ) const{
         if( *loggingEnabledPtr && instanceLoggingEnabled ){
             if( *writeProceedingTextPtr ){
                 *writeProceedingTextPtr = false;
