@@ -204,7 +204,22 @@ public:
         }
         return *this;
     }
-    
+	
+#ifdef __GRT_ARDUINO_BUILD__
+    const Log& operator<< (const __FlashStringHelper* val ){
+        if( *loggingEnabledPtr && instanceLoggingEnabled ){
+            if( *writeProceedingTextPtr ){
+                *writeProceedingTextPtr = false;
+                std::cout << proceedingText.c_str();
+                *lastMessagePtr = "";
+            }
+            std::cout << val;
+            //*lastMessagePtr += val;
+        }
+        return *this;
+    };
+#endif
+	
     // this is the type of std::cout
     typedef std::basic_ostream<char, std::char_traits<char> > CoutType;
     
