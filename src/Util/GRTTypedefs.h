@@ -104,7 +104,11 @@ typedef unsigned int UINT;
 typedef signed int SINT;
 typedef unsigned long ULONG;
 #endif
-    
+
+#ifndef F
+#define F(x) x
+#endif
+
 //Define any common GRT OS independent typedefs
 typedef std::vector<double> VectorDouble;
     

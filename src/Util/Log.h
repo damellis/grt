@@ -205,7 +205,7 @@ public:
         return *this;
     }
 	
-#ifdef __GRT_ARDUINO_BUILD__
+#if defined(__GRT_ARDUINO_BUILD__) && defined(__AVR__)
     const Log& operator<< (const __FlashStringHelper* val ) const{
         if( *loggingEnabledPtr && instanceLoggingEnabled ){
             if( *writeProceedingTextPtr ){
