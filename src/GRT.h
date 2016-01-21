@@ -112,7 +112,7 @@
 
 //Include Classification Modules
 //#include "ClassificationModules/AdaBoost/AdaBoost.h"
-//#include "ClassificationModules/ANBC/ANBC.h"
+#include "ClassificationModules/ANBC/ANBC.h"
 //#include "ClassificationModules/BAG/BAG.h"
 //#include "ClassificationModules/DecisionTree/DecisionTree.h"
 //#include "ClassificationModules/DTW/DTW.h"

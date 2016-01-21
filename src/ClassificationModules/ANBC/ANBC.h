@@ -121,6 +121,7 @@ public:
      */
     virtual bool clear();
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      This saves the trained ANBC model to a file.
      This overrides the saveModelToFile function in the Classifier base class.
@@ -138,7 +139,26 @@ public:
      @return returns true if the model was loaded successfully, false otherwise
      */
     virtual bool loadModelFromFile(fstream &file);
+#endif
+
+    /**
+     This saves the trained ANBC model to a stream.
+     This overrides the saveModelToFile function in the Classifier base class.
+     
+     @param ostream &file: a reference to the stream the ANBC model will be saved to
+     @return returns true if the model was saved successfully, false otherwise
+     */
+    virtual bool saveModelToStream(ostream &file) const;
     
+    /**
+     This loads a trained ANBC model from a stream.
+     This overrides the loadModelFromFile function in the Classifier base class.
+     
+     @param istream &file: a reference to the stream the ANBC model will be loaded from
+     @return returns true if the model was loaded successfully, false otherwise
+     */
+    virtual bool loadModelFromStream(istream &file);
+
     /**
      This recomputes the null rejection thresholds for each of the classes in the ANBC model.
      This will be called automatically if the setGamma(double gamma) function is called.
@@ -197,7 +217,10 @@ public:
     using MLBase::predict_;
 
 protected:
+#ifndef __GRT_ARDUINO_BUILD__
     bool loadLegacyModelFromFile( fstream &file );
+#endif
+
     
     bool weightsDataSet;                  //A flag to indicate if the user has manually set the weights buffer
     ClassificationData weightsData;       //The weights of each feature for each class for training the algorithm

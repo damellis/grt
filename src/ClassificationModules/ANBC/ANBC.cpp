@@ -99,13 +99,13 @@ bool ANBC::train_(ClassificationData &labelledTrainingData){
     const unsigned int K = labelledTrainingData.getNumClasses();
     
     if( M == 0 ){
-        errorLog << "train_(ClassificationData &labelledTrainingData) - Training data has zero samples!" << endl;
+        errorLog << F("train_(ClassificationData &labelledTrainingData) - Training data has zero samples!") << endl;
         return false;
     }
     
     if( weightsDataSet ){
         if( weightsData.getNumDimensions() != N ){
-            errorLog << "train_(ClassificationData &labelledTrainingData) - The number of dimensions in the weights data (" << weightsData.getNumDimensions() << ") is not equal to the number of dimensions of the training data (" << N << ")" << endl;
+            errorLog << F("train_(ClassificationData &labelledTrainingData) - The number of dimensions in the weights data (") << weightsData.getNumDimensions() << F(") is not equal to the number of dimensions of the training data (") << N << ")" << endl;
             return false;
         }
     }
@@ -144,7 +144,7 @@ bool ANBC::train_(ClassificationData &labelledTrainingData){
             }
             
             if( !weightsFound ){
-                errorLog << "train_(ClassificationData &labelledTrainingData) - Failed to find the weights for class " << classLabel << endl;
+                errorLog << F("train_(ClassificationData &labelledTrainingData) - Failed to find the weights for class ") << classLabel << endl;
                 return false;
             }
         }else{
@@ -166,17 +166,17 @@ bool ANBC::train_(ClassificationData &labelledTrainingData){
         //Train the model for this class
         models[k].gamma = nullRejectionCoeff;
         if( !models[k].train(classLabel,data,weights) ){
-            errorLog << "train_(ClassificationData &labelledTrainingData) - Failed to train model for class: " << classLabel << endl;
+            errorLog << F("train_(ClassificationData &labelledTrainingData) - Failed to train model for class: ") << classLabel << endl;
             
             //Try and work out why the training failed
             if( models[k].N == 0 ){
-                errorLog << "train_(ClassificationData &labelledTrainingData) - N == 0!" << endl;
+                errorLog << F("train_(ClassificationData &labelledTrainingData) - N == 0!") << endl;
                 models.clear();
                 return false;
             }
             for(UINT j=0; j<numInputDimensions; j++){
                 if( models[k].sigma[j] == 0 ){
-                    errorLog << "train_(ClassificationData &labelledTrainingData) - The standard deviation of column " << j+1 << " is zero! Check the training data" << endl;
+                    errorLog << F("train_(ClassificationData &labelledTrainingData) - The standard deviation of column ") << j+1 << F(" is zero! Check the training data") << endl;
                     models.clear();
                     return false;
                 }
@@ -201,7 +201,7 @@ bool ANBC::train_(ClassificationData &labelledTrainingData){
 bool ANBC::predict_(VectorDouble &inputVector){
     
     if( !trained ){
-        errorLog << "predict_(VectorDouble &inputVector) - ANBC Model Not Trained!" << endl;
+        errorLog << F("predict_(VectorDouble &inputVector) - ANBC Model Not Trained!") << endl;
         return false;
     }
     
@@ -211,7 +211,7 @@ bool ANBC::predict_(VectorDouble &inputVector){
     if( !trained ) return false;
     
 	if( inputVector.size() != numInputDimensions ){
-        errorLog << "predict_(VectorDouble &inputVector) - The size of the input vector (" << inputVector.size() << ") does not match the num features in the model (" << numInputDimensions << endl;
+        errorLog << F("predict_(VectorDouble &inputVector) - The size of the input vector (") << inputVector.size() << F(") does not match the num features in the model (") << numInputDimensions << endl;
 		return false;
 	}
     
@@ -298,7 +298,8 @@ bool ANBC::clear(){
     
     return true;
 }
-    
+
+#ifndef __GRT_ARDUINO_BUILD__
 bool ANBC::saveModelToFile(fstream &file) const{
     
     if(!file.is_open())
@@ -307,12 +308,17 @@ bool ANBC::saveModelToFile(fstream &file) const{
 		return false;
 	}
     
+    return saveModelToStream(file);
+}
+#endif
+
+bool ANBC::saveModelToStream(ostream &file) const{
 	//Write the header info
 	file<<"GRT_ANBC_MODEL_FILE_V2.0\n";
     
     //Write the classifier settings to the file
-    if( !Classifier::saveBaseSettingsToFile(file) ){
-        errorLog <<"saveModelToFile(fstream &file) - Failed to save classifier base settings to file!" << endl;
+    if( !Classifier::saveBaseSettingsToStream(file) ){
+        errorLog << F("saveModelToFile(fstream &file) - Failed to save classifier base settings to file!") << endl;
 		return false;
     }
     
@@ -347,38 +353,47 @@ bool ANBC::saveModelToFile(fstream &file) const{
     
     return true;
 }
-    
+ 
+#ifndef __GRT_ARDUINO_BUILD__
 bool ANBC::loadModelFromFile(fstream &file){
-    
+    if(!file.is_open())
+    {
+        errorLog << F("loadModelFromFile(string filename) - Could not open file to load model") << endl;
+        return false;
+    }
+
+    return loadModelFromStream(file);
+}
+#endif
+
+bool ANBC::loadModelFromStream(istream &file){
     trained = false;
     numInputDimensions = 0;
     numClasses = 0;
     models.clear();
     classLabels.clear();
     
-    if(!file.is_open())
-    {
-        errorLog << "loadModelFromFile(string filename) - Could not open file to load model" << endl;
-        return false;
-    }
-    
     std::string word;
     file >> word;
     
     //Check to see if we should load a legacy file
     if( word == "GRT_ANBC_MODEL_FILE_V1.0" ){
+#ifdef __GRT_ARDUINO_BUILD__
+        return false; // unsupported for now.
+#else
         return loadLegacyModelFromFile( file );
+#endif
     }
     
     //Find the file type header
     if(word != "GRT_ANBC_MODEL_FILE_V2.0"){
-        errorLog << "loadModelFromFile(string filename) - Could not find Model File Header" << endl;
+        errorLog << F("loadModelFromFile(string filename) - Could not find Model File Header") << endl;
         return false;
     }
     
     //Load the base settings from the file
-    if( !Classifier::loadBaseSettingsFromFile(file) ){
-        errorLog << "loadModelFromFile(string filename) - Failed to load base settings from file!" << endl;
+    if( !Classifier::loadBaseSettingsFromStream(file) ){
+        errorLog << F("loadModelFromFile(string filename) - Failed to load base settings from file!") << endl;
         return false;
     }
     
@@ -392,32 +407,32 @@ bool ANBC::loadModelFromFile(fstream &file){
             UINT modelID;
             file >> word;
             if(word != "*************_MODEL_*************"){
-                errorLog << "loadModelFromFile(string filename) - Could not find header for the "<<k+1<<"th model" << endl;
+                errorLog << F("loadModelFromFile(string filename) - Could not find header for the ")<<k+1<<"th model" << endl;
                 return false;
             }
             
             file >> word;
             if(word != "Model_ID:"){
-                errorLog << "loadModelFromFile(string filename) - Could not find model ID for the "<<k+1<<"th model" << endl;
+                errorLog << F("loadModelFromFile(string filename) - Could not find model ID for the ")<<k+1<<"th model" << endl;
                 return false;
             }
             file >> modelID;
             
             if(modelID-1!=k){
-                cout<<"ANBC: Model ID does not match the current class ID for the "<<k+1<<"th model" << endl;
+                cout<<F("ANBC: Model ID does not match the current class ID for the "<<k+1<<"th model") << endl;
                 return false;
             }
             
             file >> word;
             if(word != "N:"){
-                cout<<"ANBC: Could not find N for the "<<k+1<<"th model" << endl;
+                cout<<F("ANBC: Could not find N for the ")<<k+1<<"th model" << endl;
                 return false;
             }
             file >> models[k].N;
             
             file >> word;
             if(word != "ClassLabel:"){
-                errorLog << "loadModelFromFile(string filename) - Could not find ClassLabel for the "<<k+1<<"th model" << endl;
+                errorLog << F("loadModelFromFile(string filename) - Could not find ClassLabel for the ")<<k+1<<"th model" << endl;
                 return false;
             }
             file >> models[k].classLabel;
@@ -425,28 +440,28 @@ bool ANBC::loadModelFromFile(fstream &file){
             
             file >> word;
             if(word != "Threshold:"){
-                errorLog << "loadModelFromFile(string filename) - Could not find the threshold for the "<<k+1<<"th model" << endl;
+                errorLog << F("loadModelFromFile(string filename) - Could not find the threshold for the ")<<k+1<<"th model" << endl;
                 return false;
             }
             file >> models[k].threshold;
             
             file >> word;
             if(word != "Gamma:"){
-                errorLog << "loadModelFromFile(string filename) - Could not find the gamma parameter for the "<<k+1<<"th model" << endl;
+                errorLog << F("loadModelFromFile(string filename) - Could not find the gamma parameter for the ")<<k+1<<"th model" << endl;
                 return false;
             }
             file >> models[k].gamma;
             
             file >> word;
             if(word != "TrainingMu:"){
-                errorLog << "loadModelFromFile(string filename) - Could not find the training mu parameter for the "<<k+1<<"th model" << endl;
+                errorLog << F("loadModelFromFile(string filename) - Could not find the training mu parameter for the ")<<k+1<<"th model" << endl;
                 return false;
             }
             file >> models[k].trainingMu;
             
             file >> word;
             if(word != "TrainingSigma:"){
-                errorLog << "loadModelFromFile(string filename) - Could not find the training sigma parameter for the "<<k+1<<"th model" << endl;
+                errorLog << F("loadModelFromFile(string filename) - Could not find the training sigma parameter for the ")<<k+1<<"th model" << endl;
                 return false;
             }
             file >> models[k].trainingSigma;
@@ -459,7 +474,7 @@ bool ANBC::loadModelFromFile(fstream &file){
             //Load Mu, Sigma and Weights
             file >> word;
             if(word != "Mu:"){
-                errorLog << "loadModelFromFile(string filename) - Could not find the Mu vector for the "<<k+1<<"th model" << endl;
+                errorLog << F("loadModelFromFile(string filename) - Could not find the Mu vector for the ")<<k+1<<"th model" << endl;
                 return false;
             }
             
@@ -472,7 +487,7 @@ bool ANBC::loadModelFromFile(fstream &file){
             
             file >> word;
             if(word != "Sigma:"){
-                errorLog << "loadModelFromFile(string filename) - Could not find the Sigma vector for the "<<k+1<<"th model" << endl;
+                errorLog << F("loadModelFromFile(string filename) - Could not find the Sigma vector for the ")<<k+1<<"th model" << endl;
                 return false;
             }
             
@@ -485,7 +500,7 @@ bool ANBC::loadModelFromFile(fstream &file){
             
             file >> word;
             if(word != "Weights:"){
-                errorLog << "loadModelFromFile(string filename) - Could not find the Weights vector for the "<<k+1<<"th model" << endl;
+                errorLog << F("loadModelFromFile(string filename) - Could not find the Weights vector for the ")<<k+1<<"th model" << endl;
                 return false;
             }
             
@@ -534,7 +549,8 @@ bool ANBC::setWeights(const ClassificationData &weightsData){
     }
     return false;
 }
-    
+
+#ifndef __GRT_ARDUINO_BUILD__
 bool ANBC::loadLegacyModelFromFile( fstream &file ){
     
     string word;
@@ -718,6 +734,6 @@ bool ANBC::loadLegacyModelFromFile( fstream &file ){
     return true;
     
 }
-
+#endif
 } //End of namespace GRT
 
