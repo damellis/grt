@@ -89,6 +89,7 @@ public:
      */
     virtual bool reset();
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      This saves the feature extraction settings to a file.
      
@@ -104,24 +105,25 @@ public:
      @return returns true if the settings were saved successfully, false otherwise
      */
     virtual bool loadModelFromFile(string filename);
-    
+#endif
+
     /**
-     This saves the feature extraction settings to a file.
+     This saves the feature extraction settings to a stream.
      This overrides the saveSettingsToFile function in the FeatureExtraction base class.
      
-     @param fstream &file: a reference to the file to save the settings to
+     @param ostream &file: a reference to the stream to save the settings to
      @return returns true if the settings were saved successfully, false otherwise
      */
-    virtual bool saveModelToFile(fstream &file) const;
+    virtual bool saveModelToFile(ostream &file) const;
     
     /**
-     This loads the feature extraction settings from a file.
+     This loads the feature extraction settings from a stream.
      This overrides the loadSettingsFromFile function in the FeatureExtraction base class.
      
-     @param fstream &file: a reference to the file to load the settings from
+     @param istream &file: a reference to the stream to load the settings from
      @return returns true if the settings were loaded successfully, false otherwise
      */
-    virtual bool loadModelFromFile(fstream &file);
+    virtual bool loadModelFromFile(istream &file);
 
     /**
      Initializes the MovementTrajectoryFeatures

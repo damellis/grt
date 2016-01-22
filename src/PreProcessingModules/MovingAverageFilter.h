@@ -94,6 +94,7 @@ public:
      */
     virtual bool reset();
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      This saves the current settings of the MovingAverageFilter to a file.
      This overrides the saveModelToFile function in the PreProcessing base class.
@@ -102,16 +103,18 @@ public:
      @return returns true if the model was saved successfully, false otherwise
      */
     virtual bool saveModelToFile(string filename) const;
+#endif
     
     /**
-     This saves the current settings of the MovingAverageFilter to a file.
+     This saves the current settings of the MovingAverageFilter to a stream.
      This overrides the saveModelToFile function in the PreProcessing base class.
      
-     @param fstream &file: a reference to the file the settings will be saved to
+     @param fstream &file: a reference to the stream the settings will be saved to
      @return returns true if the settings were saved successfully, false otherwise
      */
-    virtual bool saveModelToFile(fstream &file) const;
+    virtual bool saveModelToFile(ostream &file) const;
     
+#ifndef __GRT_ARDUINO_BUILD__
     /**
      This loads the MovingAverageFilter settings from a file.
      This overrides the loadModelFromFile function in the PreProcessing base class.
@@ -120,15 +123,16 @@ public:
      @return returns true if the settings were loaded successfully, false otherwise
      */
     virtual bool loadModelFromFile(string filename);
+#endif
     
     /**
-     This loads the MovingAverageFilter settings from a file.
+     This loads the MovingAverageFilter settings from a stream.
      This overrides the loadModelFromFile function in the PreProcessing base class.
      
-     @param fstream &file: a reference to the file to load the settings from
+     @param fstream &file: a reference to the stream to load the settings from
      @return returns true if the model was loaded successfully, false otherwise
      */
-    virtual bool loadModelFromFile(fstream &file);
+    virtual bool loadModelFromFile(istream &file);
     
     /**
      Initializes the filter, setting the filter size and dimensionality of the data it will filter.

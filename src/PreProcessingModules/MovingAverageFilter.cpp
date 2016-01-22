@@ -116,6 +116,7 @@ bool MovingAverageFilter::reset(){
     return false;
 }
     
+#ifndef __GRT_ARDUINO_BUILD__
 bool MovingAverageFilter::saveModelToFile(string filename) const{
     
     if( !initialized ){
@@ -135,13 +136,14 @@ bool MovingAverageFilter::saveModelToFile(string filename) const{
     
     return true;
 }
+#endif
 
-bool MovingAverageFilter::saveModelToFile(fstream &file) const{
+bool MovingAverageFilter::saveModelToFile(ostream &file) const{
     
-    if( !file.is_open() ){
-        errorLog << "saveModelToFile(fstream &file) - The file is not open!" << endl;
-        return false;
-    }
+//    if( !file.is_open() ){
+//        errorLog << "saveModelToFile(fstream &file) - The file is not open!" << endl;
+//        return false;
+//    }
     
     file << "GRT_MOVING_AVERAGE_FILTER_FILE_V1.0" << endl;
     
@@ -152,6 +154,7 @@ bool MovingAverageFilter::saveModelToFile(fstream &file) const{
     return true;
 }
 
+#ifndef __GRT_ARDUINO_BUILD__
 bool MovingAverageFilter::loadModelFromFile(string filename){
     
     std::fstream file; 
@@ -167,13 +170,14 @@ bool MovingAverageFilter::loadModelFromFile(string filename){
     
     return true;
 }
+#endif
 
-bool MovingAverageFilter::loadModelFromFile(fstream &file){
+bool MovingAverageFilter::loadModelFromFile(istream &file){
     
-    if( !file.is_open() ){
-        errorLog << "loadModelFromFile(fstream &file) - The file is not open!" << endl;
-        return false;
-    }
+//    if( !file.is_open() ){
+//        errorLog << "loadModelFromFile(fstream &file) - The file is not open!" << endl;
+//        return false;
+//    }
     
     string word;
     
