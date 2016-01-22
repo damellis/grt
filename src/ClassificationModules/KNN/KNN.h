@@ -119,17 +119,6 @@ public:
      */
     virtual bool clear();
 
-#ifndef __GRT_ARDUINO_BUILD__
-    /**
-     This saves the trained KNN model to a file.
-     This overrides the saveModelToFile function in the Classifier base class.
-     
-     @param fstream &file: a reference to the file the KNN model will be saved to
-     @return returns true if the model was saved successfully, false otherwise
-     */
-    virtual bool saveModelToFile(fstream &file) const;
-#endif
-
     /**
      This saves the trained KNN model to an output stream.
      This overrides the saveModelToFile function in the Classifier base class.
@@ -137,18 +126,7 @@ public:
      @param ostream &file: a reference to the output stream the KNN model will be saved to
      @return returns true if the model was saved successfully, false otherwise
      */
-    virtual bool saveModelToStream(ostream &file) const;
-
-#ifndef __GRT_ARDUINO_BUILD__
-    /**
-     This loads a trained KNN model from a file.
-     This overrides the loadModelFromFile function in the Classifier base class.
-     
-     @param fstream &file: a reference to the file the KNN model will be loaded from
-     @return returns true if the model was loaded successfully, false otherwise
-     */
-    virtual bool loadModelFromFile(fstream &file);
-#endif
+    virtual bool saveModelToFile(ostream &file) const;
 
     /**
      This loads a trained KNN model from an input stream.
@@ -157,7 +135,7 @@ public:
      @param istream &file: a reference to the input stream the KNN model will be loaded from
      @return returns true if the model was loaded successfully, false otherwise
      */
-    virtual bool loadModelFromStream(istream &file);
+    virtual bool loadModelFromFile(istream &file);
     
     /**
      This recomputes the null rejection thresholds for each of the classes in the KNN model.

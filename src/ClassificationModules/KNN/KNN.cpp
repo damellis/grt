@@ -474,21 +474,13 @@ bool KNN::clear(){
     
     return true;
 }
-
-#ifndef __GRT_ARDUINO_BUILD__
-bool KNN::saveModelToFile(fstream &file) const{
     
-    if(!file.is_open())
-    {
-        errorLog << F("saveModelToFile(fstream &file) - Could not open file to save model!") << endl;
-        return false;
-    }
-    
-    return saveModelToStream(file);
-}
-#endif
-    
-bool KNN::saveModelToStream(ostream &file) const{
+bool KNN::saveModelToFile(ostream &file) const{
+//    if(!file.is_open())
+//    {
+//        errorLog << F("saveModelToFile(fstream &file) - Could not open file to save model!") << endl;
+//        return false;
+//    }
     
     //Write the header info
     file << "GRT_KNN_MODEL_FILE_V2.0\n";
@@ -535,20 +527,13 @@ bool KNN::saveModelToStream(ostream &file) const{
     return true;
 }
 
-#ifndef __GRT_ARDUINO_BUILD__
-bool KNN::loadModelFromFile(fstream &file){
-    
-    if(!file.is_open())
-    {
-        errorLog << F("loadModelFromFile(fstream &file) - Could not open file to load model!") << endl;
-        return false;
-    }
-    
-    return loadModelFromStream(file);
-}
-#endif
-    
-bool KNN::loadModelFromStream(istream &file){
+bool KNN::loadModelFromFile(istream &file){
+//    if(!file.is_open())
+//    {
+//        errorLog << F("loadModelFromFile(fstream &file) - Could not open file to load model!") << endl;
+//        return false;
+//    }
+
     std::string word;
     
     file >> word;

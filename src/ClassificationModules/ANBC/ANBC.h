@@ -120,26 +120,6 @@ public:
      @return returns true if the module was cleared succesfully, false otherwise
      */
     virtual bool clear();
-    
-#ifndef __GRT_ARDUINO_BUILD__
-    /**
-     This saves the trained ANBC model to a file.
-     This overrides the saveModelToFile function in the Classifier base class.
-     
-     @param fstream &file: a reference to the file the ANBC model will be saved to
-     @return returns true if the model was saved successfully, false otherwise
-     */
-    virtual bool saveModelToFile(fstream &file) const;
-    
-    /**
-     This loads a trained ANBC model from a file.
-     This overrides the loadModelFromFile function in the Classifier base class.
-     
-     @param fstream &file: a reference to the file the ANBC model will be loaded from
-     @return returns true if the model was loaded successfully, false otherwise
-     */
-    virtual bool loadModelFromFile(fstream &file);
-#endif
 
     /**
      This saves the trained ANBC model to a stream.
@@ -148,7 +128,7 @@ public:
      @param ostream &file: a reference to the stream the ANBC model will be saved to
      @return returns true if the model was saved successfully, false otherwise
      */
-    virtual bool saveModelToStream(ostream &file) const;
+    virtual bool saveModelToFile(ostream &file) const;
     
     /**
      This loads a trained ANBC model from a stream.
@@ -157,7 +137,7 @@ public:
      @param istream &file: a reference to the stream the ANBC model will be loaded from
      @return returns true if the model was loaded successfully, false otherwise
      */
-    virtual bool loadModelFromStream(istream &file);
+    virtual bool loadModelFromFile(istream &file);
 
     /**
      This recomputes the null rejection thresholds for each of the classes in the ANBC model.

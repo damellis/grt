@@ -299,20 +299,13 @@ bool ANBC::clear(){
     return true;
 }
 
-#ifndef __GRT_ARDUINO_BUILD__
-bool ANBC::saveModelToFile(fstream &file) const{
-    
-    if(!file.is_open())
-	{
-		errorLog <<"saveModelToFile(fstream &file) - The file is not open!" << endl;
-		return false;
-	}
-    
-    return saveModelToStream(file);
-}
-#endif
+bool ANBC::saveModelToFile(ostream &file) const{
+//    if(!file.is_open())
+//	{
+//		errorLog <<"saveModelToFile(fstream &file) - The file is not open!" << endl;
+//		return false;
+//	}
 
-bool ANBC::saveModelToStream(ostream &file) const{
 	//Write the header info
 	file<<"GRT_ANBC_MODEL_FILE_V2.0\n";
     
@@ -354,19 +347,13 @@ bool ANBC::saveModelToStream(ostream &file) const{
     return true;
 }
  
-#ifndef __GRT_ARDUINO_BUILD__
-bool ANBC::loadModelFromFile(fstream &file){
-    if(!file.is_open())
-    {
-        errorLog << F("loadModelFromFile(string filename) - Could not open file to load model") << endl;
-        return false;
-    }
+bool ANBC::loadModelFromFile(istream &file){
+//    if(!file.is_open())
+//    {
+//        errorLog << F("loadModelFromFile(string filename) - Could not open file to load model") << endl;
+//        return false;
+//    }
 
-    return loadModelFromStream(file);
-}
-#endif
-
-bool ANBC::loadModelFromStream(istream &file){
     trained = false;
     numInputDimensions = 0;
     numClasses = 0;
