@@ -360,6 +360,7 @@ bool TimeSeriesClassificationData::saveDatasetToFile(const string fileName) cons
 	for(UINT x=0; x<totalNumSamples; x++){
 		file << "************TIME_SERIES************\n";
 		file << "ClassID: "<<data[x].getClassLabel() <<endl;
+		file << "ClassName: "<<getClassNameForCorrespondingClassLabel(data[x].getClassLabel()) <<endl;
 		file << "TimeSeriesLength: "<<data[x].getLength()<<endl;
 		file << "TimeSeriesData: \n";
 		for(UINT i=0; i<data[x].getLength(); i++){
@@ -501,6 +502,7 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 	//Load each of the time series
 	for(UINT x=0; x<totalNumSamples; x++){
 		UINT classLabel = 0;
+		string className;
 		UINT timeSeriesLength = 0;
 
 		file >> word;
@@ -519,6 +521,15 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
             return false;
 		}
 		file >> classLabel;
+
+		file >> word;
+		if( word != "ClassName:" ){
+			file.close();
+            clear();
+            errorLog << "loadDatasetFromFile(string filename) - Failed to find ClassName!" << endl;
+            return false;
+		}
+		file >> className;
 
 		file >> word;
 		if( word != "TimeSeriesLength:" ){
@@ -545,6 +556,7 @@ bool TimeSeriesClassificationData::loadDatasetFromFile(const string filename){
 			}
 		}
 
+		setClassNameForCorrespondingClassLabel(className,classLabel);
 		data[x].setTrainingSample(classLabel,trainingExample);
 	}
 
