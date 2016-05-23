@@ -1,6 +1,6 @@
 # Gesture Recognition Toolkit (GRT)
 
-The (Gesture Recognition Toolkit (GRT))[http://nickgillian.com/grt/] is a cross-platform, open-source, C++ machine learning library designed for real-time gesture recognition. This repository is an effort to port the GRT to run on microcontrollers, specifically Arduino boards. Despite the name of the branch, currently the only supported hardware is the Arduino Due, which contains an ARM Cortex M3 processor. 
+The [Gesture Recognition Toolkit (GRT)](http://nickgillian.com/grt/) is a cross-platform, open-source, C++ machine learning library designed for real-time gesture recognition. This repository is an effort to port the GRT to run on microcontrollers, specifically Arduino boards. Despite the name of the branch, currently the only supported hardware is the Arduino Due, which contains an ARM Cortex M3 processor. 
 
 ## Setup
 
