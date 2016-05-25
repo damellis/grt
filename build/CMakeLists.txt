@@ -42,9 +42,9 @@ if(APPLE)
     #Add C++11 and multithreading support
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 else()
-	
+
 #Add any custom Linux definitions
-if(UNIX) 
+if(UNIX)
     message(STATUS "Building " ${LIB_BUILD_TYPE_INFO}  " library for UNIX/Linux")
     configure_file(grt.pc.in ${CMAKE_CURRENT_BINARY_DIR}/grt.pc @ONLY)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
@@ -123,6 +123,7 @@ file(GLOB GRT_DATA_STRUCTURES
 )
 
 file(GLOB GRT_FEATURE_EXTRACTION_MODULES
+    "${GRT_SRC_DIR}/FeatureExtractionModules/FeatureApply/*.cpp"
     "${GRT_SRC_DIR}/FeatureExtractionModules/FFT/*.cpp"
     "${GRT_SRC_DIR}/FeatureExtractionModules/KMeansFeatures/*.cpp"
     "${GRT_SRC_DIR}/FeatureExtractionModules/KMeansQuantizer/*.cpp"
@@ -188,7 +189,7 @@ include_directories(
     "${GRT_SRC_DIR}"
 )
 
-add_library(${GRT_LIB_NAME} 
+add_library(${GRT_LIB_NAME}
             ${LIB_BUILD_TYPE}
             ${GRT_SRC}
             ${GRT_HEADERS}
@@ -212,7 +213,7 @@ endif()
 # GRT examples
 if( BUILD_EXAMPLES )
 	function(grt_add_example _example_name _example_sub_directory)
-	    
+
             #Search for any source files in the example directory
             file(GLOB sources
 	        "${GRT_EXAMPLES_DIR}/${_example_sub_directory}/${_example_name}/*.cpp"
@@ -229,7 +230,7 @@ if( BUILD_EXAMPLES )
             #Include the main GRT include directory
             include_directories( "${GRT_EXAMPLES_DIR}/.." )
 
-            #Link against the main GRT library 
+            #Link against the main GRT library
             target_link_libraries(${_example_name}
 	            ${GRT_LIB_NAME}
 	        )
@@ -254,7 +255,7 @@ if( BUILD_EXAMPLES )
                 add_custom_command(
                     TARGET ${_example_name}
   					POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy 
+                    COMMAND ${CMAKE_COMMAND} -E copy
 					"${GRT_EXAMPLES_DIR}/${_example_sub_directory}/${_example_name}/${TRAINING_DATA}.grt" #copy target
                     "${GRT_EXAMPLES_OUTPUT_DIR}/${TRAINING_DATA}.grt"					 #copy destination
 					COMMENT "Copying ${TRAINING_DATA}.grt to examples directory"
@@ -303,7 +304,7 @@ if( BUILD_TOOLS )
 
     foreach(GRT_TOOL ${GRT_TOOLS})
         #Remove the file extension
-        GET_FILENAME_COMPONENT(EXE ${GRT_TOOL} NAME_WE) 
+        GET_FILENAME_COMPONENT(EXE ${GRT_TOOL} NAME_WE)
 
         #Add the application tools
         add_executable (${EXE} ${GRT_TOOL})
@@ -325,8 +326,7 @@ endif() #BUILD_TOOLS
 
 if(UNIX AND NOT EXCLUDE_FROM_INSTALL)
     set(CMAKE_INSTALL_LIBDIR "lib/${CMAKE_LIBRARY_ARCHITECTURE}" CACHE PATH "Output directory for libraries")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/grt.pc                         
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig                               
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/grt.pc
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
     )
 endif()
-
