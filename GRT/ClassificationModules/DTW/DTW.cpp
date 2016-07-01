@@ -492,7 +492,7 @@ bool DTW::predict_(VectorDouble &inputVector){
     //Add the new input to the circular buffer
     continuousInputDataBuffer.push_back( inputVector );
 
-    if( continuousInputDataBuffer.getNumValuesInBuffer() < averageTemplateLength ){
+    if( continuousInputDataBuffer.getNumValuesInBuffer() < averageTemplateLength / 2 ){
         //We haven't got enough samples yet so can't do the prediction
         return true;
     }
