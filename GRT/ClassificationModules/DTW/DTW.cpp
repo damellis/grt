@@ -550,6 +550,20 @@ bool DTW::recomputeNullRejectionThresholds(){
 	return true;
 }
 
+double DTW::classDistanceToNullRejectionCoefficient(UINT label, double distance){
+    
+    if (!trained) return 0.0; // TODO(damellis).
+    
+    for (UINT k=0; k<numTemplates; k++){
+        if ( templatesBuffer[k].classLabel == label ){
+            return (distance - templatesBuffer[k].trainingMu) / templatesBuffer[k].trainingSigma;
+        }
+    }
+
+    warningLog << "DTW classDistanceToNullRejectionThreshold(): didn't find label " << label << ".";
+    return 0.0;
+}
+    
 bool DTW::setModels( vector< DTWTemplate > newTemplates ){
 	
 	if( newTemplates.size() == templatesBuffer.size() ){
@@ -1239,7 +1253,7 @@ bool DTW::setNullRejectionThreshold(double nullRejectionLikelihoodThreshold)
 	this->nullRejectionLikelihoodThreshold = nullRejectionLikelihoodThreshold;
 	return true;
 }
-    
+
 bool DTW::setOffsetTimeseriesUsingFirstSample(bool offsetUsingFirstSample){
     this->offsetUsingFirstSample = offsetUsingFirstSample;
     return true;
