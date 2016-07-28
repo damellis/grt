@@ -120,13 +120,17 @@ public:
         }
         return false;
     }
-    
+
     bool recomputeNullRejectionThreshold(double gamma){
+        this->gamma = gamma;
+        this->nullRejectionThreshold = gamma;
+        return true;
+
         double newRejectionThreshold = 0;
         //TODO - Need a way of improving the null rejection threshold for the GMMs!!!!
         newRejectionThreshold = trainingMu - (trainingSigma*gamma);
         newRejectionThreshold = 0.02;
-        
+
         //Make sure that the new rejection threshold is greater than zero
         if( newRejectionThreshold > 0 ){
             this->gamma = gamma;

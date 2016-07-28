@@ -1,30 +1,31 @@
 /*
  GRT MIT License
  Copyright (c) <2012> <Nicholas Gillian, Media Lab, MIT>
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
- and associated documentation files (the "Software"), to deal in the Software without restriction, 
- including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
- and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+ and associated documentation files (the "Software"), to deal in the Software without restriction,
+ including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
  subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in all copies or substantial 
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial
  portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT 
- LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
- IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
- WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+ LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- 
+
  */
 #include "GMM.h"
+#include <limits>
 
 namespace GRT {
-    
+
 //Register the GMM module with the Classifier base class
 RegisterClassifierModule< GMM > GMM::registerModule("GMM");
-    
+
 GMM::GMM(UINT numMixtureModels,bool useScaling,bool useNullRejection,double nullRejectionCoeff,UINT maxIter,double minChange){
     classType = "GMM";
     classifierType = classType;
@@ -277,14 +278,15 @@ double GMM::computeMixtureLikelihood(const VectorDouble &x,const UINT k){
     }
     return models[k].computeMixtureLikelihood(x);
 }
-    
+
 bool GMM::saveModelToFile(fstream &file) const{
-    
+    file.precision(std::numeric_limits<double>::max_digits10);
+
     if( !trained ){
         errorLog <<"saveGMMToFile(fstream &file) - The model has not been trained!" << endl;
         return false;
     }
-    
+
     if( !file.is_open() )
     {
         errorLog <<"saveGMMToFile(fstream &file) - The file has not been opened!" << endl;
@@ -338,16 +340,17 @@ bool GMM::saveModelToFile(fstream &file) const{
                     file << endl;
                 }
             }
-            
+
             file << endl;
         }
     }
-    
+
     return true;
 }
-    
+
 bool GMM::loadModelFromFile(fstream &file){
-    
+    file.precision(std::numeric_limits<double>::max_digits10);
+
     trained = false;
     numInputDimensions = 0;
     numClasses = 0;
