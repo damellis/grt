@@ -283,6 +283,21 @@ bool ANBC::recomputeNullRejectionThresholds(){
     return false;
 }
     
+double ANBC::classDistanceToNullRejectionCoefficient(UINT label, double distance){
+    if( !trained ) return 0.0;
+    
+    for (UINT k=0; k<numClasses; k++){
+        if ( models[k].classLabel == label ){
+            // from ANBC_Model::recomputeThresholdValue():
+            // threshold = trainingMu-(trainingSigma*gamma);
+            return (distance - models[k].trainingMu) / (-models[k].trainingSigma);
+        }
+    }
+
+    warningLog << "classDistanceToNullRejectionThreshold(): didn't find label " << label << ".";
+    return 0.0;
+}
+
 bool ANBC::reset(){
     return true;
 }

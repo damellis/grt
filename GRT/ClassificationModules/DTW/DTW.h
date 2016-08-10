@@ -217,7 +217,9 @@ public:
      @return returns the null rejection coefficient that would have yielded a null rejection threshold for this class equal
      to the specified distance
      */
-    double classDistanceToNullRejectionCoefficient(UINT label, double distance);
+    virtual double classDistanceToNullRejectionCoefficient(UINT label, double distance);
+
+    virtual bool getSupportsClassDistanceToNullRejectionCoefficient(){ return true; }
     
     /**
      This returns the number of templates in the current model.

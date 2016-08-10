@@ -149,6 +149,19 @@ public:
 	virtual bool recomputeNullRejectionThresholds();
     
     /**
+     This translates distances to the given label (as returned by getClassDistances()) into the units of the
+     null rejection coefficients as specified in this class's constructor.
+     
+     @param UINT label: the label of the class to which the specified distance applies
+     @param double distance: the distance to translate
+     @return returns the null rejection coefficient that would have yielded a null rejection threshold for this class equal
+     to the specified distance
+     */
+    virtual double classDistanceToNullRejectionCoefficient(UINT label, double distance);
+    
+    virtual bool getSupportsClassDistanceToNullRejectionCoefficient(){ return true; }
+    
+    /**
      Gets a vector containing the null rejection thresholds for each class, this will be an N-dimensional vector, where N is the number of classes in the model.
      
      @return returns a vector containing the null rejection thresholds for each class, an empty vector will be returned if the model has not been trained

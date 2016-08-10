@@ -235,6 +235,23 @@ public:
     virtual bool recomputeNullRejectionThresholds(){ return false; }
     
     /**
+     This translates distances to the given label (as returned by getClassDistances()) into the units of the
+     null rejection coefficients as specified in this class's constructor. The default implementation simply 
+     returns the passed-in distance unchanged. This should be overridden by each classifier.
+     
+     @param UINT label: the label of the class to which the specified distance applies
+     @param double distance: the distance to translate
+     @return returns the null rejection coefficient that would have yielded a null rejection threshold for this class equal
+     to the specified distance
+     */
+    virtual double classDistanceToNullRejectionCoefficient(UINT label, double distance){ return distance; }
+    
+    /**
+     Whether or not the classifier supports the classDistanceToNullRejectionCoefficient() function.
+     */
+    virtual bool getSupportsClassDistanceToNullRejectionCoefficient(){ return false; }
+    
+    /**
      Indicates if the classifier can be used to classify timeseries data.
      If true then the classifier can accept training data in the LabelledTimeSeriesClassificationData format.
      
