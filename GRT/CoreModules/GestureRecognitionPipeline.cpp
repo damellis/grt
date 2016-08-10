@@ -1482,7 +1482,11 @@ bool GestureRecognitionPipeline::predict_classifier(const VectorDouble &input){
                 errorLog << "predict_classifier(VectorDouble inputVector) - Failed to compute features from data. FeatureExtractionModuleIndex: " << moduleIndex << endl;
                 return false;
             }
-            inputVector = featureExtractionModules[moduleIndex]->getFeatureVector();
+            if (featureExtractionModules[moduleIndex]->getFeatureDataReady()) {
+                inputVector = featureExtractionModules[moduleIndex]->getFeatureVector();
+            } else {
+                return false;
+            }
         }
     }
     
